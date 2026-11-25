@@ -1,0 +1,1 @@
+import{c as e}from"./overlay-C5gWdm8p.js";import{_ as t,c as n}from"./router-DogTk7EP.js";import{Ct as r}from"./store-BrCcMLNc.js";import{r as i}from"./rooms-C2UmtAfl.js";var a=!1;async function o(){if(!a){a=!0,t(`medium`);try{let e=await i(`lounge`,{public:!1});n(`/room/${e.code}`)}catch(t){e(r(t,`تعذّر فتح الجلسة.`),`bad`)}finally{a=!1}}}export{o as t};

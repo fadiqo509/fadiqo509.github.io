@@ -1,0 +1,24 @@
+{
+ "clips": {
+  "gift": "gift.mp3",
+  "royale": "royale.mp3",
+  "toll": "toll.mp3",
+  "sticker": "sticker.mp3",
+  "deal": "deal.mp3",
+  "flick": "flick.mp3",
+  "pick": "pick.mp3",
+  "throw": "throw.mp3",
+  "challenge": "challenge.mp3",
+  "reveal": "reveal.mp3",
+  "truth": "truth.mp3",
+  "lie": "lie.mp3",
+  "pour": "pour.mp3",
+  "safe": "safe.mp3",
+  "bitter": "bitter.mp3",
+  "win": "win.mp3",
+  "lose": "lose.mp3",
+  "turn": "turn.mp3",
+  "tick": "tick.mp3",
+  "tap": "tap.mp3"
+ }
+}

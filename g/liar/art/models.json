@@ -1,0 +1,788 @@
+{
+ "_note": "Written by build_people.py. Rigged characters in metres, seated, with their own clips. `local` is the character's place in its own seat's frame, column by column; the table puts the seat back and multiplies.",
+ "models": {
+  "abusaad": {
+   "file": "char-abusaad.glb",
+   "tall": 1.299,
+   "hip": 0.5162,
+   "knees": 0.8194,
+   "top": 1.366,
+   "local": [
+    1.05,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.05,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.05,
+    0.0,
+    -0.0,
+    0.001974,
+    0.0,
+    1.0
+   ],
+   "triangles": 9999,
+   "bytes": 961084,
+   "hand": {
+    "bone": "L_Hand",
+    "offset": [
+     -0.0069,
+     0.0965,
+     0.1045
+    ]
+   },
+   "clips": {
+    "idle": {
+     "seconds": 6.0,
+     "loop": true,
+     "holds": false
+    },
+    "talk": {
+     "seconds": 2.583,
+     "loop": true,
+     "holds": false
+    },
+    "throw": {
+     "seconds": 1.417,
+     "loop": false,
+     "holds": false
+    },
+    "call": {
+     "seconds": 1.833,
+     "loop": false,
+     "holds": false
+    },
+    "win": {
+     "seconds": 1.917,
+     "loop": false,
+     "holds": false
+    },
+    "lose": {
+     "seconds": 2.25,
+     "loop": false,
+     "holds": false
+    },
+    "out": {
+     "seconds": 1.667,
+     "loop": false,
+     "holds": true
+    }
+   }
+  },
+  "alaa": {
+   "file": "char-alaa.glb",
+   "tall": 1.6181,
+   "hip": 0.6012,
+   "knees": 0.6214,
+   "top": 1.5277,
+   "local": [
+    1.05,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.05,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.05,
+    0.0,
+    0.0,
+    -0.171226,
+    0.0,
+    1.0
+   ],
+   "thighs": 0.55,
+   "arms": [
+    0.0,
+    0.0
+   ],
+   "hands": [
+    0.907,
+    0.907
+   ],
+   "hand": {
+    "bone": "L_Hand",
+    "offset": [
+     0.0036,
+     0.0574,
+     0.107
+    ]
+   },
+   "triangles": 10000,
+   "bytes": 898364,
+   "clips": {
+    "idle": {
+     "seconds": 6.0,
+     "loop": true,
+     "holds": false
+    },
+    "talk": {
+     "seconds": 2.583,
+     "loop": true,
+     "holds": false
+    },
+    "throw": {
+     "seconds": 1.417,
+     "loop": false,
+     "holds": false
+    },
+    "call": {
+     "seconds": 1.833,
+     "loop": false,
+     "holds": false
+    },
+    "win": {
+     "seconds": 1.917,
+     "loop": false,
+     "holds": false
+    },
+    "lose": {
+     "seconds": 2.25,
+     "loop": false,
+     "holds": false
+    },
+    "out": {
+     "seconds": 1.667,
+     "loop": false,
+     "holds": true
+    }
+   }
+  },
+  "noura": {
+   "file": "char-noura.glb",
+   "tall": 1.3971,
+   "hip": 0.4669,
+   "knees": 0.7483,
+   "top": 1.4653,
+   "local": [
+    1.05,
+    0.0,
+    -0.0,
+    0.0,
+    0.0,
+    1.05,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.05,
+    0.0,
+    0.0,
+    -0.00174,
+    0.0,
+    1.0
+   ],
+   "triangles": 10891,
+   "bytes": 1141008,
+   "hand": {
+    "bone": "L_Hand",
+    "offset": [
+     -0.0356,
+     0.0705,
+     0.0991
+    ]
+   },
+   "clips": {
+    "idle": {
+     "seconds": 6.0,
+     "loop": true,
+     "holds": false
+    },
+    "talk": {
+     "seconds": 2.583,
+     "loop": true,
+     "holds": false
+    },
+    "throw": {
+     "seconds": 1.417,
+     "loop": false,
+     "holds": false
+    },
+    "call": {
+     "seconds": 1.833,
+     "loop": false,
+     "holds": false
+    },
+    "win": {
+     "seconds": 1.917,
+     "loop": false,
+     "holds": false
+    },
+    "lose": {
+     "seconds": 2.25,
+     "loop": false,
+     "holds": false
+    },
+    "out": {
+     "seconds": 1.667,
+     "loop": false,
+     "holds": true
+    }
+   }
+  },
+  "shahd": {
+   "file": "char-shahd.glb",
+   "tall": 1.3322,
+   "hip": 0.4542,
+   "knees": 0.6102,
+   "top": 1.3968,
+   "local": [
+    1.05,
+    0.0,
+    -0.0,
+    0.0,
+    0.0,
+    1.05,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.05,
+    0.0,
+    -0.0,
+    -0.002017,
+    0.0,
+    1.0
+   ],
+   "triangles": 10758,
+   "bytes": 1022940,
+   "hand": {
+    "bone": "L_Hand",
+    "offset": [
+     -0.0145,
+     0.0293,
+     0.1158
+    ]
+   },
+   "clips": {
+    "idle": {
+     "seconds": 6.0,
+     "loop": true,
+     "holds": false
+    },
+    "talk": {
+     "seconds": 2.583,
+     "loop": true,
+     "holds": false
+    },
+    "throw": {
+     "seconds": 1.417,
+     "loop": false,
+     "holds": false
+    },
+    "call": {
+     "seconds": 1.833,
+     "loop": false,
+     "holds": false
+    },
+    "win": {
+     "seconds": 1.917,
+     "loop": false,
+     "holds": false
+    },
+    "lose": {
+     "seconds": 2.25,
+     "loop": false,
+     "holds": false
+    },
+    "out": {
+     "seconds": 1.667,
+     "loop": false,
+     "holds": true
+    }
+   }
+  },
+  "arshad": {
+   "file": "char-arshad.glb",
+   "tall": 1.4151,
+   "hip": 0.4384,
+   "knees": 0.6869,
+   "top": 1.4856,
+   "local": [
+    1.05,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.05,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.05,
+    0.0,
+    0.0,
+    -0.000306,
+    0.0,
+    1.0
+   ],
+   "thighs": -0.14,
+   "arms": [
+    0.359,
+    0.158
+   ],
+   "hands": [
+    0.761,
+    0.71
+   ],
+   "hand": {
+    "bone": "L_Hand",
+    "offset": [
+     0.0026,
+     0.0375,
+     0.1384
+    ]
+   },
+   "triangles": 10022,
+   "bytes": 896008,
+   "clips": {
+    "idle": {
+     "seconds": 6.0,
+     "loop": true,
+     "holds": false
+    },
+    "talk": {
+     "seconds": 2.583,
+     "loop": true,
+     "holds": false
+    },
+    "throw": {
+     "seconds": 1.417,
+     "loop": false,
+     "holds": false
+    },
+    "call": {
+     "seconds": 1.833,
+     "loop": false,
+     "holds": false
+    },
+    "win": {
+     "seconds": 1.917,
+     "loop": false,
+     "holds": false
+    },
+    "lose": {
+     "seconds": 2.25,
+     "loop": false,
+     "holds": false
+    },
+    "out": {
+     "seconds": 1.667,
+     "loop": false,
+     "holds": true
+    }
+   }
+  },
+  "ala": {
+   "file": "char-ala.glb",
+   "tall": 1.2122,
+   "hip": 0.4386,
+   "knees": 0.7094,
+   "top": 1.2723,
+   "local": [
+    1.05,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.05,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.05,
+    0.0,
+    0.0,
+    -0.000482,
+    0.0,
+    1.0
+   ],
+   "thighs": 0.174,
+   "arms": [
+    0.85,
+    0.85
+   ],
+   "hands": [
+    0.632,
+    0.636
+   ],
+   "hand": {
+    "bone": "L_Hand",
+    "offset": [
+     -0.0024,
+     0.1159,
+     0.0488
+    ]
+   },
+   "triangles": 10000,
+   "bytes": 1009548,
+   "clips": {
+    "idle": {
+     "seconds": 6.0,
+     "loop": true,
+     "holds": false
+    },
+    "talk": {
+     "seconds": 2.583,
+     "loop": true,
+     "holds": false
+    },
+    "throw": {
+     "seconds": 1.417,
+     "loop": false,
+     "holds": false
+    },
+    "call": {
+     "seconds": 1.833,
+     "loop": false,
+     "holds": false
+    },
+    "win": {
+     "seconds": 1.917,
+     "loop": false,
+     "holds": false
+    },
+    "lose": {
+     "seconds": 2.25,
+     "loop": false,
+     "holds": false
+    },
+    "out": {
+     "seconds": 1.667,
+     "loop": false,
+     "holds": true
+    }
+   }
+  },
+  "maitha": {
+   "file": "char-maitha.glb",
+   "tall": 1.4035,
+   "hip": 0.4357,
+   "knees": 0.7397,
+   "top": 1.4762,
+   "local": [
+    1.05,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.05,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.05,
+    0.0,
+    0.0,
+    0.002477,
+    0.0,
+    1.0
+   ],
+   "thighs": -0.315,
+   "arms": [
+    0.115,
+    0.0
+   ],
+   "hands": [
+    0.76,
+    0.734
+   ],
+   "hand": {
+    "bone": "L_Hand",
+    "offset": [
+     -0.0143,
+     0.1274,
+     0.0781
+    ]
+   },
+   "triangles": 10000,
+   "bytes": 947872,
+   "clips": {
+    "idle": {
+     "seconds": 6.0,
+     "loop": true,
+     "holds": false
+    },
+    "talk": {
+     "seconds": 2.583,
+     "loop": true,
+     "holds": false
+    },
+    "throw": {
+     "seconds": 1.417,
+     "loop": false,
+     "holds": false
+    },
+    "call": {
+     "seconds": 1.833,
+     "loop": false,
+     "holds": false
+    },
+    "win": {
+     "seconds": 1.917,
+     "loop": false,
+     "holds": false
+    },
+    "lose": {
+     "seconds": 2.25,
+     "loop": false,
+     "holds": false
+    },
+    "out": {
+     "seconds": 1.667,
+     "loop": false,
+     "holds": true
+    }
+   }
+  },
+  "moudi": {
+   "file": "char-moudi.glb",
+   "tall": 1.3094,
+   "hip": 0.4372,
+   "knees": 0.7196,
+   "top": 1.3758,
+   "local": [
+    1.05,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.05,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.05,
+    0.0,
+    0.0,
+    0.00091,
+    0.0,
+    1.0
+   ],
+   "thighs": -0.16,
+   "arms": [
+    0.85,
+    0.564
+   ],
+   "hands": [
+    0.753,
+    0.71
+   ],
+   "hand": {
+    "bone": "L_Hand",
+    "offset": [
+     -0.0145,
+     0.128,
+     0.0616
+    ]
+   },
+   "triangles": 10998,
+   "bytes": 1037368,
+   "clips": {
+    "idle": {
+     "seconds": 6.0,
+     "loop": true,
+     "holds": false
+    },
+    "talk": {
+     "seconds": 2.583,
+     "loop": true,
+     "holds": false
+    },
+    "throw": {
+     "seconds": 1.417,
+     "loop": false,
+     "holds": false
+    },
+    "call": {
+     "seconds": 1.833,
+     "loop": false,
+     "holds": false
+    },
+    "win": {
+     "seconds": 1.917,
+     "loop": false,
+     "holds": false
+    },
+    "lose": {
+     "seconds": 2.25,
+     "loop": false,
+     "holds": false
+    },
+    "out": {
+     "seconds": 1.667,
+     "loop": false,
+     "holds": true
+    }
+   }
+  },
+  "rose": {
+   "file": "char-rose.glb",
+   "tall": 1.3886,
+   "hip": 0.4371,
+   "knees": 0.5756,
+   "top": 1.4592,
+   "local": [
+    1.05,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.05,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.05,
+    0.0,
+    0.0,
+    0.001084,
+    0.0,
+    1.0
+   ],
+   "thighs": -0.365,
+   "arms": [
+    0.0,
+    0.0
+   ],
+   "hands": [
+    0.873,
+    0.873
+   ],
+   "hand": {
+    "bone": "L_Hand",
+    "offset": [
+     -0.0089,
+     0.0416,
+     0.101
+    ]
+   },
+   "triangles": 9840,
+   "bytes": 830024,
+   "clips": {
+    "idle": {
+     "seconds": 6.0,
+     "loop": true,
+     "holds": false
+    },
+    "talk": {
+     "seconds": 2.583,
+     "loop": true,
+     "holds": false
+    },
+    "throw": {
+     "seconds": 1.417,
+     "loop": false,
+     "holds": false
+    },
+    "call": {
+     "seconds": 1.833,
+     "loop": false,
+     "holds": false
+    },
+    "win": {
+     "seconds": 1.917,
+     "loop": false,
+     "holds": false
+    },
+    "lose": {
+     "seconds": 2.25,
+     "loop": false,
+     "holds": false
+    },
+    "out": {
+     "seconds": 1.667,
+     "loop": false,
+     "holds": true
+    }
+   }
+  },
+  "umsaad": {
+   "file": "char-umsaad.glb",
+   "tall": 1.2095,
+   "hip": 0.4366,
+   "knees": 0.6869,
+   "top": 1.2716,
+   "local": [
+    1.05,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.05,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.05,
+    0.0,
+    0.0,
+    0.001588,
+    0.0,
+    1.0
+   ],
+   "thighs": -0.047,
+   "arms": [
+    0.85,
+    0.449
+   ],
+   "hands": [
+    0.755,
+    0.709
+   ],
+   "hand": {
+    "bone": "L_Hand",
+    "offset": [
+     -0.0004,
+     0.0723,
+     0.0605
+    ]
+   },
+   "triangles": 10217,
+   "bytes": 903208,
+   "clips": {
+    "idle": {
+     "seconds": 6.0,
+     "loop": true,
+     "holds": false
+    },
+    "talk": {
+     "seconds": 2.583,
+     "loop": true,
+     "holds": false
+    },
+    "throw": {
+     "seconds": 1.417,
+     "loop": false,
+     "holds": false
+    },
+    "call": {
+     "seconds": 1.833,
+     "loop": false,
+     "holds": false
+    },
+    "win": {
+     "seconds": 1.917,
+     "loop": false,
+     "holds": false
+    },
+    "lose": {
+     "seconds": 2.25,
+     "loop": false,
+     "holds": false
+    },
+    "out": {
+     "seconds": 1.667,
+     "loop": false,
+     "holds": true
+    }
+   }
+  }
+ }
+}

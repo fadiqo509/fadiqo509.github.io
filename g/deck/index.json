@@ -1,0 +1,186 @@
+{
+ "card": {
+  "width": 380,
+  "height": 623,
+  "radius": 0.057
+ },
+ "source": {
+  "courts": [
+   "ChatGPT Image 8 سبتمبر 2026، 11_02_35 ص.png",
+   "ChatGPT Image 8 سبتمبر 2026، 11_00_53 ص.png",
+   "ChatGPT Image 8 سبتمبر 2026، 07_55_26 ص.png"
+  ],
+  "numbers": "ChatGPT Image 8 سبتمبر 2026، 11_05_26 ص.png",
+  "backs": "ChatGPT Image 8 سبتمبر 2026، 07_14_50 ص.png"
+ },
+ "cards": {
+  "10C": {
+   "file": "10C.webp",
+   "bytes": 33736
+  },
+  "10D": {
+   "file": "10D.webp",
+   "bytes": 33410
+  },
+  "10H": {
+   "file": "10H.webp",
+   "bytes": 32844
+  },
+  "10S": {
+   "file": "10S.webp",
+   "bytes": 33522
+  },
+  "7C": {
+   "file": "7C.webp",
+   "bytes": 31560
+  },
+  "7D": {
+   "file": "7D.webp",
+   "bytes": 30810
+  },
+  "7H": {
+   "file": "7H.webp",
+   "bytes": 30592
+  },
+  "7S": {
+   "file": "7S.webp",
+   "bytes": 31618
+  },
+  "8C": {
+   "file": "8C.webp",
+   "bytes": 32462
+  },
+  "8D": {
+   "file": "8D.webp",
+   "bytes": 32028
+  },
+  "8H": {
+   "file": "8H.webp",
+   "bytes": 32090
+  },
+  "8S": {
+   "file": "8S.webp",
+   "bytes": 32664
+  },
+  "9C": {
+   "file": "9C.webp",
+   "bytes": 33038
+  },
+  "9D": {
+   "file": "9D.webp",
+   "bytes": 32420
+  },
+  "9H": {
+   "file": "9H.webp",
+   "bytes": 32512
+  },
+  "9S": {
+   "file": "9S.webp",
+   "bytes": 33186
+  },
+  "AC": {
+   "file": "AC.webp",
+   "bytes": 31252
+  },
+  "AD": {
+   "file": "AD.webp",
+   "bytes": 30622
+  },
+  "AH": {
+   "file": "AH.webp",
+   "bytes": 28578
+  },
+  "AS": {
+   "file": "AS.webp",
+   "bytes": 31580
+  },
+  "JC": {
+   "file": "JC.webp",
+   "bytes": 60370
+  },
+  "JD": {
+   "file": "JD.webp",
+   "bytes": 57380
+  },
+  "JH": {
+   "file": "JH.webp",
+   "bytes": 58256
+  },
+  "JS": {
+   "file": "JS.webp",
+   "bytes": 60030
+  },
+  "KC": {
+   "file": "KC.webp",
+   "bytes": 67880
+  },
+  "KD": {
+   "file": "KD.webp",
+   "bytes": 65184
+  },
+  "KH": {
+   "file": "KH.webp",
+   "bytes": 63990
+  },
+  "KS": {
+   "file": "KS.webp",
+   "bytes": 66324
+  },
+  "QC": {
+   "file": "QC.webp",
+   "bytes": 57994
+  },
+  "QD": {
+   "file": "QD.webp",
+   "bytes": 52974
+  },
+  "QH": {
+   "file": "QH.webp",
+   "bytes": 55958
+  },
+  "QS": {
+   "file": "QS.webp",
+   "bytes": 57300
+  },
+  "back": {
+   "file": "back.webp",
+   "bytes": 44064
+  },
+  "back-2": {
+   "file": "back-2.webp",
+   "bytes": 47050
+  },
+  "back-3": {
+   "file": "back-3.webp",
+   "bytes": 42944
+  },
+  "back-4": {
+   "file": "back-4.webp",
+   "bytes": 38936
+  },
+  "back-5": {
+   "file": "back-5.webp",
+   "bytes": 43522
+  },
+  "back-6": {
+   "file": "back-6.webp",
+   "bytes": 41548
+  },
+  "back-7": {
+   "file": "back-7.webp",
+   "bytes": 42122
+  },
+  "back-8": {
+   "file": "back-8.webp",
+   "bytes": 45118
+  }
+ },
+ "skinLibrary": {
+  "manifest": "skins/index.json",
+  "version": 1,
+  "skinCount": 3,
+  "faceCountPerSkin": 32,
+  "backCountPerSkin": 4,
+  "featuredCardCount": 6
+ }
+}

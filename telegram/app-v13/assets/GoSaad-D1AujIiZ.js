@@ -1,0 +1,1 @@
+import{c as e}from"./signals.module-lmW9Tqy9.js";import{c as t}from"./router-DogTk7EP.js";import{n}from"./Icon-dh_-ax08.js";import{s as r}from"./kit-DTOjLlEU.js";function i(){return e(()=>{t(`/saad`,{replace:!0})},[]),n(r,{})}export{i as default};

@@ -1,0 +1,384 @@
+{
+ "_note": "Written by build_voices.py. One file per line the characters say; record over them at will.",
+ "voices": {
+  "abusaad": {
+   "throw": [
+    {
+     "file": "throw-1.mp3",
+     "text": "خذها وأنت مغمّض",
+     "have": false
+    },
+    {
+     "file": "throw-2.mp3",
+     "text": "على راسي وعيني",
+     "have": false
+    },
+    {
+     "file": "throw-3.mp3",
+     "text": "هذي منّي لك",
+     "have": false
+    },
+    {
+     "file": "throw-4.mp3",
+     "text": "بسم الله، تفضّل",
+     "have": false
+    }
+   ],
+   "bluff": [
+    {
+     "file": "bluff-1.mp3",
+     "text": "لا تحلّل واجد يا بعدي",
+     "have": false
+    },
+    {
+     "file": "bluff-2.mp3",
+     "text": "أنا؟ أكذب؟ حاشا",
+     "have": false
+    },
+    {
+     "file": "bluff-3.mp3",
+     "text": "شوف وجهي زين وقل لي",
+     "have": false
+    }
+   ],
+   "challenge": [
+    {
+     "file": "challenge-1.mp3",
+     "text": "كذّاب والله العظيم",
+     "have": false
+    },
+    {
+     "file": "challenge-2.mp3",
+     "text": "وريني وش نزّلت يا بطل",
+     "have": false
+    },
+    {
+     "file": "challenge-3.mp3",
+     "text": "لا لا، اكشفها الحين",
+     "have": false
+    }
+   ],
+   "caught": [
+    {
+     "file": "caught-1.mp3",
+     "text": "يا ساتر يا ربّ",
+     "have": false
+    },
+    {
+     "file": "caught-2.mp3",
+     "text": "طاحت عليّ يا ربعي",
+     "have": false
+    },
+    {
+     "file": "caught-3.mp3",
+     "text": "الله يعين",
+     "have": false
+    }
+   ],
+   "safe": [
+    {
+     "file": "safe-1.mp3",
+     "text": "الحمد لله ربّ العالمين",
+     "have": false
+    },
+    {
+     "file": "safe-2.mp3",
+     "text": "قهوة حلوة، زادك الله",
+     "have": false
+    }
+   ],
+   "won": [
+    {
+     "file": "won-1.mp3",
+     "text": "قلت لكم من أوّل",
+     "have": false
+    },
+    {
+     "file": "won-2.mp3",
+     "text": "صلّوا على النبي",
+     "have": false
+    },
+    {
+     "file": "won-3.mp3",
+     "text": "هذي خبرة سنين يا ولدي",
+     "have": false
+    }
+   ],
+   "out": [
+    {
+     "file": "out-1.mp3",
+     "text": "قمت وأنا راضي",
+     "have": false
+    },
+    {
+     "file": "out-2.mp3",
+     "text": "الله يعوّض علينا",
+     "have": false
+    }
+   ]
+  },
+  "shahd": {
+   "throw": [
+    {
+     "file": "throw-1.mp3",
+     "text": "أوكي، هذي لك",
+     "have": false
+    },
+    {
+     "file": "throw-2.mp3",
+     "text": "خذ ولا تسأل",
+     "have": false
+    },
+    {
+     "file": "throw-3.mp3",
+     "text": "بسرعة بسرعة",
+     "have": false
+    },
+    {
+     "file": "throw-4.mp3",
+     "text": "هاك، لا تطوّلها",
+     "have": false
+    }
+   ],
+   "bluff": [
+    {
+     "file": "bluff-1.mp3",
+     "text": "ليه تطالعني كذا؟",
+     "have": false
+    },
+    {
+     "file": "bluff-2.mp3",
+     "text": "صدّقني ترى",
+     "have": false
+    },
+    {
+     "file": "bluff-3.mp3",
+     "text": "أنا؟ ولا بحياتي",
+     "have": false
+    }
+   ],
+   "challenge": [
+    {
+     "file": "challenge-1.mp3",
+     "text": "كذّاااب",
+     "have": false
+    },
+    {
+     "file": "challenge-2.mp3",
+     "text": "لا لا، اكشفها",
+     "have": false
+    }
+   ],
+   "caught": [
+    {
+     "file": "caught-1.mp3",
+     "text": "ما توقّعت",
+     "have": false
+    },
+    {
+     "file": "caught-2.mp3",
+     "text": "يا حظّي",
+     "have": false
+    }
+   ],
+   "safe": [
+    {
+     "file": "safe-1.mp3",
+     "text": "نجوت",
+     "have": false
+    }
+   ],
+   "won": [
+    {
+     "file": "won-1.mp3",
+     "text": "يس!",
+     "have": false
+    },
+    {
+     "file": "won-2.mp3",
+     "text": "قلت لكم",
+     "have": false
+    }
+   ],
+   "out": [
+    {
+     "file": "out-1.mp3",
+     "text": "خلاص، أتفرّج",
+     "have": false
+    }
+   ]
+  },
+  "noura": {
+   "throw": [
+    {
+     "file": "throw-1.mp3",
+     "text": "تفضّل",
+     "have": false
+    },
+    {
+     "file": "throw-2.mp3",
+     "text": "بهدوء",
+     "have": false
+    },
+    {
+     "file": "throw-3.mp3",
+     "text": "هذي حقّك",
+     "have": false
+    },
+    {
+     "file": "throw-4.mp3",
+     "text": "خذ، بالتوفيق",
+     "have": false
+    }
+   ],
+   "bluff": [
+    {
+     "file": "bluff-1.mp3",
+     "text": "ولا يهمّك",
+     "have": false
+    },
+    {
+     "file": "bluff-2.mp3",
+     "text": "أنا صادقة دايم",
+     "have": false
+    },
+    {
+     "file": "bluff-3.mp3",
+     "text": "ما عندي غيرها",
+     "have": false
+    }
+   ],
+   "challenge": [
+    {
+     "file": "challenge-1.mp3",
+     "text": "ما صدّقتك",
+     "have": false
+    },
+    {
+     "file": "challenge-2.mp3",
+     "text": "اكشف ورقك",
+     "have": false
+    }
+   ],
+   "caught": [
+    {
+     "file": "caught-1.mp3",
+     "text": "ماشي",
+     "have": false
+    },
+    {
+     "file": "caught-2.mp3",
+     "text": "من عيوني",
+     "have": false
+    }
+   ],
+   "safe": [
+    {
+     "file": "safe-1.mp3",
+     "text": "حلوة القهوة",
+     "have": false
+    }
+   ],
+   "won": [
+    {
+     "file": "won-1.mp3",
+     "text": "كذا تكون اللعبة",
+     "have": false
+    }
+   ],
+   "out": [
+    {
+     "file": "out-1.mp3",
+     "text": "عن إذنكم",
+     "have": false
+    }
+   ]
+  },
+  "alaa": {
+   "throw": [
+    {
+     "file": "throw-1.mp3",
+     "text": "على السريع",
+     "have": false
+    },
+    {
+     "file": "throw-2.mp3",
+     "text": "هاك",
+     "have": false
+    },
+    {
+     "file": "throw-3.mp3",
+     "text": "خذ نصيبك",
+     "have": false
+    },
+    {
+     "file": "throw-4.mp3",
+     "text": "يلّا، دورك",
+     "have": false
+    }
+   ],
+   "bluff": [
+    {
+     "file": "bluff-1.mp3",
+     "text": "وش فيك متردّد؟",
+     "have": false
+    },
+    {
+     "file": "bluff-2.mp3",
+     "text": "أقسم صادق",
+     "have": false
+    },
+    {
+     "file": "bluff-3.mp3",
+     "text": "ليه الشكّ؟",
+     "have": false
+    }
+   ],
+   "challenge": [
+    {
+     "file": "challenge-1.mp3",
+     "text": "كذّاب أكيد",
+     "have": false
+    },
+    {
+     "file": "challenge-2.mp3",
+     "text": "اكشفها اكشفها",
+     "have": false
+    }
+   ],
+   "caught": [
+    {
+     "file": "caught-1.mp3",
+     "text": "ما توقّعتها",
+     "have": false
+    },
+    {
+     "file": "caught-2.mp3",
+     "text": "طيّب طيّب",
+     "have": false
+    }
+   ],
+   "safe": [
+    {
+     "file": "safe-1.mp3",
+     "text": "مرّت على خير",
+     "have": false
+    }
+   ],
+   "won": [
+    {
+     "file": "won-1.mp3",
+     "text": "يا سلام",
+     "have": false
+    }
+   ],
+   "out": [
+    {
+     "file": "out-1.mp3",
+     "text": "حظّ",
+     "have": false
+    }
+   ]
+  }
+ }
+}

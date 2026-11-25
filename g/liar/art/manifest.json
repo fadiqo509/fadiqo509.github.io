@@ -1,0 +1,141 @@
+{
+ "_note": "Written by build_assets.py. Read by the table, never edited by hand.",
+ "characters": {
+  "noura": {
+   "file": "char-noura.webp",
+   "w": 515,
+   "h": 504
+  },
+  "alaa": {
+   "file": "char-alaa.webp",
+   "w": 568,
+   "h": 504
+  },
+  "shahd": {
+   "file": "char-shahd.webp",
+   "w": 494,
+   "h": 501
+  },
+  "abusaad": {
+   "file": "char-abusaad.webp",
+   "w": 574,
+   "h": 398
+  },
+  "arshad": {
+   "file": "char-arshad.webp",
+   "w": 542,
+   "h": 504
+  },
+  "ala": {
+   "file": "char-ala.webp",
+   "w": 536,
+   "h": 504
+  },
+  "umsaad": {
+   "file": "char-umsaad.webp",
+   "w": 490,
+   "h": 504
+  },
+  "rose": {
+   "file": "char-rose.webp",
+   "w": 412,
+   "h": 504
+  },
+  "moudi": {
+   "file": "char-moudi.webp",
+   "w": 541,
+   "h": 504
+  },
+  "maitha": {
+   "file": "char-maitha.webp",
+   "w": 494,
+   "h": 504
+  }
+ },
+ "deck": {
+  "file": "cards.webp",
+  "size": [
+   2048,
+   1024
+  ],
+  "cells": {
+   "S": {
+    "x": 6,
+    "y": 6,
+    "w": 388,
+    "h": 542
+   },
+   "M": {
+    "x": 406,
+    "y": 6,
+    "w": 388,
+    "h": 542
+   },
+   "T": {
+    "x": 806,
+    "y": 6,
+    "w": 388,
+    "h": 542
+   },
+   "W": {
+    "x": 1206,
+    "y": 6,
+    "w": 388,
+    "h": 542
+   },
+   "back": {
+    "x": 1606,
+    "y": 6,
+    "w": 388,
+    "h": 542
+   }
+  },
+  "ratio": 0.7161,
+  "faces": {
+   "S": "card-S.webp",
+   "M": "card-M.webp",
+   "T": "card-T.webp",
+   "W": "card-W.webp"
+  },
+  "source": "liar-cards.png"
+ },
+ "room": {
+  "table-top": {
+   "file": "table-top.webp",
+   "w": 1024,
+   "h": 1024
+  },
+  "carpet": {
+   "file": "carpet.webp",
+   "w": 512,
+   "h": 512
+  },
+  "wall": {
+   "file": "wall.webp",
+   "w": 1024,
+   "h": 512
+  },
+  "brass": {
+   "file": "brass.webp",
+   "w": 256,
+   "h": 256
+  },
+  "glow": {
+   "file": "glow.webp",
+   "w": 256,
+   "h": 256
+  },
+  "shadow": {
+   "file": "shadow.webp",
+   "w": 256,
+   "h": 256
+  }
+ },
+ "faces": [
+  "S",
+  "M",
+  "T",
+  "W",
+  "back"
+ ]
+}

@@ -1,0 +1,1 @@
+import{n as e}from"./Icon-dh_-ax08.js";import{l as t}from"./kit-DTOjLlEU.js";import{QrApprove as n}from"./qrlogin-B_yAyO5H.js";function r({params:r}){return t(`الدخول برمز`),e(`div`,{class:`page`,children:e(n,{ticket:r.t})})}export{r as default};

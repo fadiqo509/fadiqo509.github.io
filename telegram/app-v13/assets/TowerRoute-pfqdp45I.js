@@ -1,0 +1,1 @@
+import{n as e}from"./Icon-dh_-ax08.js";import t from"./Saad-zr0SKn0a.js";function n(n){return e(t,{...n,fixed:`tower`})}export{n as default};

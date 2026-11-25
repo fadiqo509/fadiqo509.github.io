@@ -1,0 +1,1916 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   Baloot table. Drawn over the majlis photograph, not inside an app card.
+
+   The whole idea in one line: the background is not decoration, it is the
+   table. The majlis, the lanterns, the coffee pot and the cushions are in the
+   picture, so the interface only has to put the cards and the faces in their
+   right places on top of it. Every position here is therefore a percentage of
+   the screen and never a pixel: the picture grows and shrinks, and the cards
+   stay on the felt.
+
+   Two pictures exist, landscape and portrait, and the felt sits differently in
+   each, so the `--felt-*` variables are rewritten per orientation and
+   everything follows them.
+
+   The prefix is `blt-` and not `bl-` on purpose: the old table inside
+   index.html uses `bl-`, and sharing the prefix made our cards inherit its
+   white background and its borders.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.blt-root {
+  --felt-l: 13%;  --felt-r: 87%;  --felt-t: 25%;  --felt-b: 70%;
+  --gold: #e9c68a;
+  --gold-deep: #b8893f;
+  --ink: #f4ecdc;
+
+  /* Cards are measured against width AND height. Width alone makes a giant
+     card on a short landscape phone and pushes the hand off the screen.
+
+     `--card-w` is the player's own card, and it is deliberately large: a hand
+     you cannot read is a hand you misplay. Eight of them will not fit side by
+     side at this size, and they are not meant to — the script measures the
+     row and tucks them further under each other, and only shrinks them when
+     tucking alone would hide the corner that carries the rank.
+
+     `--felt-card` is everything else — the trick, the deck, the counted
+     piles — held at its own scale so that growing the hand does not swallow
+     the table. */
+  --card-w: clamp(72px, min(12.5vw, 18vh), 152px);
+  --felt-card: calc(var(--card-w) * .72);
+  --seat: clamp(44px, min(6vw, 9vh), 74px);
+  --bar: clamp(46px, 8vh, 64px);
+
+  /* Layers, declared once. Without them a card passes over its owner's face
+     and over the scoreboard, simply because it was drawn last. */
+  --z-felt: 1; --z-hand: 3; --z-seat: 6; --z-top: 7; --z-bar: 8; --z-sheet: 10;
+  --ease: cubic-bezier(.22, .9, .26, 1);
+
+  position: fixed;
+  inset: 0 0 auto;
+  /* Height comes from what is visible, not from the window. Telegram on a
+     phone hands out a window taller than the visible area, so the bottom of
+     the table, and the player's own hand with it, fell below the edge.
+     `--vh` is written by the script from Telegram's stable height; `dvh` is
+     the fallback. */
+  height: var(--vh, 100dvh);
+  z-index: 40;
+  overflow: hidden;
+  color: var(--ink);
+  font-family: inherit;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.blt-root * { box-sizing: border-box; }
+.blt-root svg { display: block; }
+
+/* A long press on a table is not an attempt to copy text.
+
+   Holding a finger down used to raise the selection handles and the copy
+   menu, and dragging a card used to drag its image the way an image on a
+   page drags — so a whole other page seemed to be lying behind the game.
+   The refusal is written on every element and not on the root alone,
+   because `-webkit-touch-callout` is not inherited. */
+.blt-root *,
+.blt-root *::before,
+.blt-root *::after {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.blt-root img {
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;      /* the press belongs to the card, not its picture */
+}
+/* And the page under the table neither scrolls nor selects while a hand is
+   being played on top of it. */
+body.blt-playing {
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* The table takes the whole screen, so everything the app puts underneath it
+   (the room header, the player strip, the chat box) is hidden. Otherwise a
+   white panel shows through from behind the cards. */
+body.blt-playing #view-room > *:not(#room-stage) { display: none !important; }
+body.blt-playing #room-stage {
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+}
+
+/* ═══════════ background ═══════════ */
+
+.blt-bg {
+  position: absolute;
+  inset: 0;
+  background: #120a06 center / cover no-repeat;
+  background-image: var(--bg-land);
+}
+/* A slow breath of lantern light. It sleeps for anyone who asked for less motion. */
+.blt-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 80% at 50% 42%, #ffce8a1f, #0000 62%);
+  animation: blt-lantern 7s var(--ease) infinite alternate;
+}
+@keyframes blt-lantern { from { opacity: .5; } to { opacity: 1; } }
+
+@media (orientation: portrait) {
+  .blt-root {
+    --felt-l: 7%; --felt-r: 93%; --felt-t: 27%; --felt-b: 66%;
+    --card-w: clamp(78px, min(24vw, 13vh), 150px);
+  }
+  .blt-bg { background-image: var(--bg-port); }
+}
+
+/* A landscape phone is wide and very short. The felt band narrows so the hand
+   and the call bar keep their room instead of climbing onto the table. */
+@media (orientation: landscape) and (max-height: 560px) {
+  .blt-root {
+    --felt-t: 20%; --felt-b: 60%;
+    --card-w: clamp(64px, 15.5vh, 112px);
+    --seat: clamp(38px, 8vh, 58px);
+    --bar: clamp(40px, 11vh, 52px);
+  }
+}
+
+/* ═══════════ top bar ═══════════ */
+
+.blt-top {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: var(--z-top);
+  display: flex;
+  /* Menu on the left, score on the right. The page runs right to left, and
+     reversing the row is safer than forcing `direction`, which the app shell's
+     own rules override. */
+  flex-direction: row-reverse;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: clamp(7px, 1.5vw, 16px);
+  gap: 10px;
+  pointer-events: none;
+}
+.blt-top > * { pointer-events: auto; }
+
+.blt-icons { display: flex; gap: clamp(5px, .8vw, 9px); }
+
+.blt-ico {
+  display: grid;
+  place-items: center;
+  width: clamp(32px, min(4.2vw, 6.6vh), 44px);
+  aspect-ratio: 1;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid #ffffff2e;
+  background: #150d08cc;
+  color: var(--gold);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  transition: transform .16s var(--ease), background .16s, color .16s;
+}
+.blt-ico svg { width: 56%; height: 56%; }
+.blt-ico:hover { background: #26170dd9; transform: translateY(-1px); }
+.blt-ico:active { transform: scale(.94); }
+.blt-ico.on { background: linear-gradient(#f0cf92, #c9993f); color: #2a1a05; }
+.blt-ico.off { color: #b9ac97; opacity: .72; }
+
+.blt-score {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: clamp(7px, 1.2vw, 16px);
+  padding: clamp(5px, .8vw, 10px) clamp(9px, 1.5vw, 18px);
+  border-radius: 14px;
+  border: 1px solid #d8ae6357;
+  background: linear-gradient(#1d120acc, #0d0705e0);
+  box-shadow: 0 6px 22px #00000059;
+  backdrop-filter: blur(8px);
+  text-align: center;
+}
+.blt-score b {
+  display: block;
+  font-size: clamp(17px, min(2.4vw, 3.6vh), 30px);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.blt-score small { font-size: clamp(9px, 1.1vw, 12px); opacity: .72; }
+.blt-score .us b { color: #86d99a; }
+.blt-score .them b { color: #e8776f; }
+.blt-score .bar { width: 1px; align-self: stretch; background: #ffffff26; }
+.blt-score .meta {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid #ffffff1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-size: clamp(9px, 1.1vw, 12px);
+  color: var(--gold);
+}
+.blt-score .meta svg { width: 1.05em; height: 1.05em; }
+.blt-score .meta .red { color: #ff8d80; }
+
+/* ═══════════ seats ═══════════ */
+
+/* Each seat carries its own fan. Anchoring the cards inside the seat instead
+   of positioning them separately is what keeps them beside their owner's face
+   on every screen: move the seat and the cards move with it, always. */
+.blt-seat {
+  position: absolute;
+  z-index: var(--z-seat);
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  width: max-content;
+  transform: translate(-50%, -50%);
+}
+/* My own chair is not drawn at all. My cards are my place at the table, and
+   a badge with my own name on it, at the bottom of my own screen, stood on
+   the very cards it was naming. Whose turn it is and how long is left are
+   said in words in the call bar instead. */
+.blt-seat.south { display: none; }
+.blt-seat.west  { left: 9%;  top: 40%; }
+.blt-seat.east  { left: 91%; top: 40%; }
+.blt-seat.north { left: 50%; top: 15%; }
+
+@media (orientation: portrait) {
+  .blt-seat.west  { left: 12%; top: 41%; }
+  .blt-seat.east  { left: 88%; top: 41%; }
+  .blt-seat.north { left: 50%; top: 17%; }
+}
+@media (orientation: landscape) and (max-height: 560px) {
+  .blt-seat.west  { left: 7%;  top: 36%; }
+  .blt-seat.east  { left: 93%; top: 36%; }
+  .blt-seat.north { left: 50%; top: 13%; }
+}
+
+/* The picture and its timer share one box of exactly one avatar's size, so
+   the ring is the picture's own frame and cannot drift outside it however the
+   screen is sized. */
+.blt-avatar {
+  position: relative;
+  width: var(--seat);
+  height: var(--seat);
+}
+
+.blt-face {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #241509;
+  border: 2px solid #d8ae63;
+  box-shadow: 0 4px 14px #000000a6, inset 0 0 0 2px #00000038;
+  display: grid;
+  place-items: center;
+  font-size: calc(var(--seat) * .42);
+  font-weight: 700;
+  color: var(--gold);
+}
+.blt-face img { width: 100%; height: 100%; object-fit: cover; }
+
+/* The turn ring empties with the seconds. The client interpolates it from
+   `turnDeadline`, never from a local counter, so a slow poll cannot make one
+   player's clock disagree with another's. */
+/* A perfect circle, and a whole one, lying exactly on the frame of the
+   picture. It used to be sized by hand at twelve pixels wider than the avatar
+   and floated six above it, so it hung outside the face on every screen. Now
+   it fills the shared box: the stroke is drawn at r=47 of a 100-unit box and
+   is 5 wide, so its outer edge falls at 49.5 — inside the box by half a unit,
+   which is what keeps the arc from being clipped at its own edge. */
+.blt-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .2s;
+  z-index: 3;
+}
+.blt-seat.turn .blt-ring { opacity: 1; }
+.blt-ring circle { fill: none; stroke-width: 5; stroke-linecap: round; }
+.blt-ring .track { stroke: #00000059; }
+.blt-ring .run { stroke: #7ddc9a; transition: stroke .3s; }
+.blt-seat.hurry .blt-ring .run { stroke: #ff8f6b; }
+
+.blt-seat.turn .blt-face {
+  border-color: #ffd88a;
+  box-shadow: 0 0 0 3px #ffd88a33, 0 6px 20px #000000b3;
+}
+
+/* Two cues that answer, without a word, the two questions asked at speed:
+   who just threw, and who took it. */
+@keyframes blt-threw {
+  0%   { box-shadow: 0 0 0 0 #ffd88a00, 0 6px 20px #000000b3; }
+  32%  { box-shadow: 0 0 0 6px #ffd88a7a, 0 6px 20px #000000b3; }
+  100% { box-shadow: 0 0 0 0 #ffd88a00, 0 6px 20px #000000b3; }
+}
+.blt-seat.threw .blt-face { animation: blt-threw .62s var(--ease); }
+
+@keyframes blt-takes {
+  0%, 100% { transform: scale(1); }
+  42%      { transform: scale(1.09); }
+}
+.blt-seat.takes .blt-avatar { animation: blt-takes .74s var(--ease); }
+
+@keyframes blt-bump {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  45%      { transform: translateX(-50%) scale(1.15); }
+}
+.blt-seat.takes .blt-pile { animation: blt-bump .74s var(--ease); }
+
+/* An open microphone pulses a green ring, so the table knows who is talking
+   without anyone stopping the game to ask. */
+.blt-seat.talking .blt-face { border-color: #7ddc9a; }
+.blt-seat.talking .blt-face::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px solid #7ddc9a;
+  animation: blt-mic 1.5s ease-out infinite;
+}
+@keyframes blt-mic {
+  from { transform: scale(1); opacity: .85; }
+  to   { transform: scale(1.35); opacity: 0; }
+}
+
+.blt-name {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 4px 2px 8px;
+  border-radius: 9px;
+  border: 1px solid #ffffff21;
+  background: #efe3cfee;
+  color: #2a1c0c;
+  font-size: clamp(10px, min(1.1vw, 1.8vh), 13px);
+  font-weight: 700;
+  max-width: clamp(88px, 12vw, 150px);
+}
+.blt-name span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.blt-name u {
+  text-decoration: none;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: #b03a30;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+.blt-seat.mine .blt-name u { background: #2f6fd0; }
+.blt-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #62c97c;
+  box-shadow: 0 0 6px #62c97c;
+  flex: 0 0 auto;
+}
+.blt-dot.off { background: #8a8578; box-shadow: none; }
+
+.blt-crown {
+  position: absolute;
+  top: -8px;
+  inset-inline-start: -7px;
+  z-index: 4;
+  width: calc(var(--seat) * .38);
+  height: calc(var(--seat) * .38);
+  color: var(--gold);
+  filter: drop-shadow(0 2px 3px #000c);
+}
+/* Without a size of its own an inline SVG falls back to 300x150, and the
+   declarer's crown covered half the table. Every other mark in this file is
+   sized by its own rule; this one had been missed. */
+.blt-crown svg { width: 100%; height: 100%; }
+
+/* The opponent's cards: face down, counted exactly, gathered in one grip with
+   the tips opening upwards, and tucked behind the avatar. */
+.blt-fan {
+  position: absolute;
+  left: 50%;
+  bottom: 46%;
+  z-index: 1;
+  display: flex;
+  transform: translateX(-50%) rotate(var(--fan-tilt, 0deg));
+  pointer-events: none;
+}
+.blt-seat.west .blt-fan { --fan-tilt: -11deg; }
+.blt-seat.east .blt-fan { --fan-tilt: 11deg; }
+.blt-seat.south .blt-fan { display: none; }
+.blt-fan img {
+  position: relative;
+  /* Right-to-left page: the first card is the rightmost, and each later one is
+     laid to its left. The stack must run the other way round or the left card
+     covers the right one, which is not how a hand is held. */
+  z-index: calc(var(--n, 8) - var(--i, 0));
+  width: calc(var(--felt-card) * .44);
+  margin-inline-start: calc(var(--felt-card) * -.32);
+  border-radius: 5px;
+  filter: drop-shadow(0 3px 5px #0009);
+  transform: rotate(var(--r));
+  transform-origin: 50% 100%;
+}
+.blt-fan img:first-child { margin-inline-start: 0; }
+/* A hand filling up while the deal is still going out, and again when the
+   three that follow the bid arrive. */
+.blt-fan.dealing img,
+.blt-fan.more img.new {
+  animation: blt-fan-in .3s var(--ease) var(--dd, 0ms) backwards;
+}
+@keyframes blt-fan-in {
+  from { opacity: 0; transform: translateY(-16px) rotate(var(--r)) scale(.55); }
+  to   { opacity: 1; transform: rotate(var(--r)); }
+}
+
+/* Tricks a player has won, stacked under his name. The cards have to go
+   somewhere the eye can count, or the score is a number with no story. */
+.blt-pile {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  height: calc(var(--felt-card) * .3);
+  pointer-events: none;
+  z-index: 1;
+}
+.blt-pile img {
+  width: calc(var(--felt-card) * .21);
+  border-radius: 3px;
+  margin-inline-start: calc(var(--felt-card) * -.15);
+  transform: translateY(calc(var(--s) * -1.5px)) rotate(calc(var(--s) * 2deg - 3deg));
+  filter: drop-shadow(0 2px 3px #000000a6);
+}
+.blt-pile img:first-child { margin-inline-start: 0; }
+.blt-pile b {
+  margin-inline-start: 5px;
+  padding: 1px 6px;
+  border-radius: 7px;
+  background: #17100ad9;
+  border: 1px solid #d8ae6357;
+  color: var(--gold);
+  font-size: clamp(9px, 1.1vw, 12px);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ═══════════ felt: the trick, the deck, the face-up card ═══════════ */
+
+.blt-felt {
+  position: absolute;
+  z-index: var(--z-felt);
+  left: var(--felt-l);
+  right: calc(100% - var(--felt-r));
+  top: var(--felt-t);
+  bottom: calc(100% - var(--felt-b));
+}
+
+.blt-deck {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  transform: translate(-50%, -50%);
+  width: calc(var(--felt-card) * .8);
+  filter: drop-shadow(0 8px 12px #000000a1);
+}
+.blt-deck::after {
+  content: '';
+  position: absolute;
+  inset: 3px -3px -6px 3px;
+  border-radius: 7px;
+  background: #2b1a10;
+  z-index: -1;
+}
+.blt-deck img { width: 100%; border-radius: 7px; }
+
+/* The shuffle happens in the middle of the table, in the air, where a real
+   one happens — see `.blt-shuffle` below. The deck lying on the felt steps
+   aside while that is going on. */
+.blt-deck.away { opacity: 0; transition: opacity .18s; }
+.blt-deck.shuffling { animation: blt-riffle .5s var(--ease) 3; }
+@keyframes blt-riffle {
+  0%   { transform: translate(-50%, -50%) rotate(0) scaleY(1); }
+  30%  { transform: translate(-54%, -52%) rotate(-7deg) scaleY(1.04); }
+  60%  { transform: translate(-46%, -48%) rotate(6deg) scaleY(.97); }
+  100% { transform: translate(-50%, -50%) rotate(0) scaleY(1); }
+}
+
+.blt-toss {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: calc(var(--felt-card) * .8);
+  border-radius: 7px;
+  filter: drop-shadow(0 6px 10px #000000a1);
+  animation: blt-toss .52s var(--ease) both;
+  pointer-events: none;
+}
+@keyframes blt-toss {
+  from { transform: translate(-50%, -50%) rotate(0) scale(.94); opacity: 0; }
+  22%  { opacity: 1; }
+  to   { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty)))
+                    rotate(var(--tr)) scale(.5);
+         opacity: 0; }
+}
+
+/* The riffle itself: two halves of a real stack, bent apart in perspective and
+   let go. Ten card backs, twice, and every one of them is gone before the
+   first bid. Drawn rather than faked with a single sliding image, because the
+   whole point of a shuffle is that the table can see it happen. */
+.blt-shuffle {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: calc(var(--felt-card) * .8);
+  aspect-ratio: 5 / 7;
+  transform: translate(-50%, -50%);
+  perspective: 760px;
+  z-index: 3;
+  pointer-events: none;
+  animation: blt-come .3s var(--ease) both;
+}
+@keyframes blt-come {
+  from { transform: translate(calc(-50% + var(--from-x, 0px)),
+                              calc(-50% + var(--from-y, 0px))) scale(.62);
+         opacity: .35; }
+  to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+.blt-shuffle img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 7px;
+  filter: drop-shadow(0 4px 8px #000000a6);
+  animation: blt-riffle-a 560ms var(--ease) calc(300ms + var(--k) * 26ms) 2 both;
+}
+.blt-shuffle img.b { animation-name: blt-riffle-b; }
+@keyframes blt-riffle-a {
+  0%   { transform: translate3d(0, 0, 0) rotateY(0) rotate(0); }
+  36%  { transform: translate3d(-44%, -13%, 46px) rotateY(38deg) rotate(-10deg); }
+  68%  { transform: translate3d(-11%, 3%, 14px) rotateY(11deg) rotate(-3deg); }
+  100% { transform: translate3d(0, 0, 0) rotateY(0) rotate(0); }
+}
+@keyframes blt-riffle-b {
+  0%   { transform: translate3d(0, 0, 0) rotateY(0) rotate(0); }
+  36%  { transform: translate3d(44%, -13%, 46px) rotateY(-38deg) rotate(10deg); }
+  68%  { transform: translate3d(11%, 3%, 14px) rotateY(-11deg) rotate(3deg); }
+  100% { transform: translate3d(0, 0, 0) rotateY(0) rotate(0); }
+}
+.blt-shuffle.dealing img { animation: none; }
+
+/* The face-up card is turned over on the table beside the deck, the way it is
+   in a real majlis, and not parked at the end of the button row. */
+.blt-flip {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  transform: translate(calc(-50% + var(--felt-card) * .72), -50%) rotate(6deg);
+  width: calc(var(--felt-card) * .8);
+  filter: drop-shadow(0 7px 12px #000000ad);
+  animation: blt-land .38s var(--ease) both;
+}
+.blt-flip img { width: 100%; border-radius: 7px; }
+.blt-flip small {
+  position: absolute;
+  inset: calc(100% + 4px) 0 auto;
+  text-align: center;
+  font-size: clamp(9px, 1.1vw, 12px);
+  color: var(--gold);
+  text-shadow: 0 1px 3px #000;
+}
+
+/* Four fixed places for the trick, each on its owner's side.
+
+   The card is moved afterwards by `--gx` and `--gy`, written in pixels by the
+   script: first to gather the four into one stack, then to carry the stack to
+   the player who won it. Pixels, because the winner's pile is not inside the
+   felt and no percentage of this box could reach it. */
+.blt-play {
+  position: absolute;
+  width: calc(var(--felt-card) * .86);
+  transform: translate(-50%, -50%) translate(var(--gx, 0px), var(--gy, 0px))
+             rotate(var(--tilt, 0deg)) rotate(var(--spin, 0deg))
+             scale(var(--sc, 1));
+  filter: drop-shadow(0 7px 11px #000000a8);
+  /* `backwards`, never `both`: an end state left filled in by the landing
+     would outrank the transform above and the card could never move again. */
+  animation: blt-land .38s var(--ease) backwards;
+  will-change: transform;
+}
+.blt-play.moving {
+  transition: transform var(--move, .34s) var(--ease),
+              opacity .26s linear var(--fade, 0s);
+}
+.blt-play img { width: 100%; border-radius: 7px; }
+.blt-play.p0, .blt-impact.p0 { left: 50%; top: 74%; --tilt: 1deg;  --from-x: 0%;    --from-y: 90%; }
+.blt-play.p1, .blt-impact.p1 { left: 74%; top: 45%; --tilt: -4deg; --from-x: 120%;  --from-y: 0%; }
+.blt-play.p2, .blt-impact.p2 { left: 50%; top: 16%; --tilt: 3deg;  --from-x: 0%;    --from-y: -110%; }
+.blt-play.p3, .blt-impact.p3 { left: 26%; top: 45%; --tilt: -2deg; --from-x: -120%; --from-y: 0%; }
+
+@keyframes blt-land {
+  from { transform: translate(calc(-50% + var(--from-x, 0%)), calc(-50% + var(--from-y, 0%)))
+                    rotate(calc(var(--tilt, 0deg) * 5)) scale(.86); opacity: 0; }
+  to   { transform: translate(-50%, -50%) rotate(var(--tilt, 0deg)) scale(1); opacity: 1; }
+}
+
+/* A jack or a nine of the hokum landing. The card hits harder, a ring goes
+   out from under it, and the room takes the blow — the bars do not, because a
+   menu that jumps under a thumb is a menu that gets mis-tapped. */
+.blt-play.heavy { animation: blt-land-hard .42s cubic-bezier(.16, 1.5, .3, 1) backwards; }
+@keyframes blt-land-hard {
+  0%   { transform: translate(calc(-50% + var(--from-x, 0%)), calc(-50% + var(--from-y, 0%)))
+                    rotate(calc(var(--tilt, 0deg) * 6)) scale(1.5); opacity: 0; }
+  55%  { opacity: 1; }
+  72%  { transform: translate(-50%, -50%) rotate(var(--tilt, 0deg)) scale(1.16); }
+  100% { transform: translate(-50%, -50%) rotate(var(--tilt, 0deg)) scale(1); opacity: 1; }
+}
+.blt-play.heavy img { box-shadow: 0 0 0 2px #ffe1a8b3, 0 0 26px #ffbd5c7a; }
+.blt-play.strong img { box-shadow: 0 0 0 1px #ffe1a866; }
+
+.blt-impact {
+  position: absolute;
+  width: calc(var(--felt-card) * .95);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 4px solid #ffe1a8;
+  transform: translate(-50%, -50%) scale(.2);
+  pointer-events: none;
+  z-index: 4;
+  animation: blt-blast .64s var(--ease) both;
+}
+@keyframes blt-blast {
+  0%   { opacity: .92; transform: translate(-50%, -50%) scale(.2); border-width: 5px; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(2.7); border-width: 1px; }
+}
+
+@keyframes blt-quake {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  12%      { transform: translate3d(-5px, 3px, 0); }
+  26%      { transform: translate3d(6px, -4px, 0); }
+  42%      { transform: translate3d(-4px, -3px, 0); }
+  58%      { transform: translate3d(4px, 3px, 0); }
+  76%      { transform: translate3d(-2px, 1px, 0); }
+}
+.blt-root.quake .blt-bg,
+.blt-root.quake .blt-felt { animation: blt-quake .46s var(--ease) both; }
+
+/* The winner's card glows for a moment so the table can read the trick. */
+.blt-play.won img { box-shadow: 0 0 0 3px #ffd88ac2, 0 0 22px #ffd88a6b; }
+
+
+/* ═══════════ my hand and the call bar ═══════════ */
+
+/* The bottom is one column, not two layers: the hand above and the buttons
+   below it in a single flow, so neither can ever ride over the other.
+   `fixed` and not `absolute` so it hangs off the screen itself, whatever
+   happens to its ancestors, with room left for a phone's home indicator. */
+.blt-bottom {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(3px, .7vh, 9px);
+  padding-bottom: calc(clamp(6px, 1.4vh, 16px) + env(safe-area-inset-bottom, 0px));
+  z-index: var(--z-hand);
+  pointer-events: none;
+}
+.blt-bottom > * { pointer-events: auto; }
+
+.blt-hand {
+  /* The cards stack among themselves and nowhere else. */
+  isolation: isolate;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: calc(var(--card-w) * var(--fit, 1) * 1.5);
+  padding-inline: calc(var(--card-w) * .14);
+  max-width: 100vw;
+}
+
+.blt-hand button {
+  position: relative;
+  flex: 0 0 auto;
+  /* `--fit` and `--pull` are written by the script after it has measured the
+     row: the first is the size the screen can carry, the second how far each
+     card tucks under the one to its right. */
+  width: calc(var(--card-w) * var(--fit, 1));
+  padding: 0;
+  border: 0;
+  background: none;
+  margin-inline-start: calc(var(--card-w) * var(--fit, 1) * var(--pull, .4) * -1);
+  /* The card on the right lies over the card on its left, so what stays in
+     sight is each card's top-left corner: the rank and the suit. The page
+     runs right to left, so index 0 is the rightmost card and the order counts
+     down. Without this the fan hid the one corner a player reads. */
+  z-index: calc(var(--n, 8) - var(--i, 0));
+  /* A level row with a slight lean, the way every serious card game shows a
+     hand. A vertical arc was tried and read as scattered. */
+  transform: translateY(var(--lift, 0px)) rotate(var(--r));
+  transform-origin: 50% 100%;
+  transition: transform .18s var(--ease), filter .18s;
+  filter: drop-shadow(0 5px 9px #000000a3);
+  cursor: default;
+  touch-action: none;
+}
+.blt-hand button:first-child { margin-inline-start: 0; }
+/* A small gap where one block of the hand ends and the next begins. The fan
+   measurement knows about it and pays for it out of the overlap. */
+.blt-hand button.sep {
+  margin-inline-start: calc(var(--card-w) * var(--fit, 1) * (.1 - var(--pull, .4)));
+}
+
+/* Each card flies in from the shuffled stack to the place it will sit. The
+   distance is measured and written by the script, so it is exact on any
+   screen; the delay is the same clock the rest of the table is dealt on. */
+.blt-hand.dealing button {
+  animation: blt-fly-in .46s var(--ease) var(--dd, 0ms) backwards;
+}
+/* A card that was already in the hand when the next three arrived: it holds
+   its place and its look, and only the new ones fly. */
+.blt-hand.dealing button.settled { animation: none; }
+@keyframes blt-fly-in {
+  0%   { opacity: 0;
+         transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(-26deg) scale(.6); }
+  36%  { opacity: 1; }
+  100% { opacity: 1; transform: translateY(var(--lift, 0px)) rotate(var(--r)); }
+}
+
+/* The order of the hand is chosen in the settings drawer at the top. A pill
+   used to float beside the fan for it, and on a phone it stood on the cards —
+   a control that covers the thing it controls. */
+.blt-hand button img { width: 100%; border-radius: 7px; display: block; }
+.blt-hand button.live { cursor: pointer; }
+
+/* Touch does not throw a card. A tap lifts it so it can be read, and only a
+   pull upwards puts it on the table. A second tap plays it too, which is what
+   a mouse expects. */
+.blt-hand button.up { --lift: calc(var(--card-w) * -.26); z-index: 40; }
+.blt-hand button.drag {
+  transition: none;
+  z-index: 60;
+  cursor: grabbing;
+  transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(var(--r)) scale(1.06);
+  filter: drop-shadow(0 14px 22px #000000b8);
+}
+.blt-hand button.live:hover { --lift: calc(var(--card-w) * -.16); z-index: 30; }
+
+/* Beginner mode only: barred cards dim, and cards of the trump suit wear a
+   gold frame so their owner can see at a glance what belongs to the hokum. */
+.blt-hand.easy button.no { filter: grayscale(.72) brightness(.62); }
+.blt-hand.easy button.no img { opacity: .82; }
+.blt-hand.easy button.trump img {
+  box-shadow: 0 0 0 2px #f2ce88, 0 0 14px #f2ce8859;
+}
+/* The mark says which suit is hokum, on the cards that belong to it. An empty
+   disc said only that something was special, which is half a hint. */
+.blt-trump-mark {
+  /* Top right, physically, on every reading direction: the rank and the suit
+     are printed in the top-left corner of every card in the deck, and a badge
+     over them takes away the one thing the player is looking for. The gold
+     frame is what marks a trump at a glance while the cards overlap; this
+     badge names it in full the moment a card is lifted. */
+  position: absolute;
+  right: 4.5%;
+  left: auto;
+  top: 3.5%;
+  display: none;
+  place-items: center;
+  width: 26%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #17100ae8;
+  border: 1.5px solid #f2ce88;
+  color: #f2ce88;
+  box-shadow: 0 2px 6px #00000080;
+}
+.blt-hand.easy button.trump .blt-trump-mark { display: grid; }
+.blt-trump-mark svg { width: 62%; height: 62%; }
+
+@keyframes blt-deal {
+  from { transform: translate(0, -46vh) rotate(0) scale(.5); opacity: 0; }
+  to   { transform: translateY(0) rotate(var(--r)); opacity: 1; }
+}
+.blt-hand.dealt button {
+  animation: blt-deal .5s var(--ease) both;
+  animation-delay: calc(var(--i) * 60ms);
+}
+
+@keyframes blt-shake {
+  10%, 90% { transform: rotate(var(--r)) translateX(-4px); }
+  30%, 70% { transform: rotate(var(--r)) translateX(6px); }
+  50%      { transform: rotate(var(--r)) translateX(-6px); }
+}
+.blt-hand button.wrong { animation: blt-shake .38s both; }
+
+/* The call bar. One row, centred, and it gives way rather than pushing the
+   cards up: on a narrow phone the buttons shrink before they wrap, and the
+   home indicator gets its own space underneath. */
+.blt-actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, .8vw, 10px);
+  justify-content: center;
+  flex-wrap: wrap;
+  min-height: var(--bar);
+  width: 100%;
+  max-width: min(98vw, 940px);
+  margin-inline: auto;
+  padding-inline: clamp(4px, 1.4vw, 14px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.blt-call {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  flex: 0 1 auto;
+  padding: clamp(7px, 1.1vh, 13px) clamp(9px, 1.5vw, 20px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-radius: 999px;
+  border: 1px solid #d8ae6370;
+  background: linear-gradient(#2a1b0fee, #140c07f2);
+  color: var(--ink);
+  font: inherit;
+  font-size: clamp(12px, min(1.5vw, 2.2vh), 18px);
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 5px 16px #0000006b;
+  transition: transform .15s var(--ease), filter .15s;
+}
+.blt-call svg { width: 1.25em; height: 1.25em; }
+.blt-call:hover { transform: translateY(-2px); filter: brightness(1.15); }
+.blt-call:active { transform: scale(.96); }
+.blt-call.go {
+  background: linear-gradient(#f3d495, #c9993f);
+  color: #2b1a05;
+  border-color: #ffe0a8;
+}
+.blt-call.suit { min-width: 0; padding-inline: clamp(11px, 1.5vw, 18px); }
+.blt-call.suit svg { width: 1.5em; height: 1.5em; }
+.blt-call.suit.red { color: #ff8d80; }
+.blt-call.icon { min-width: 0; padding-inline: clamp(10px, 1.4vw, 15px); }
+
+/* "Your turn — 7". The clock belongs in the sentence, not in a ring in a
+   corner of a screen that is already full of cards. */
+.blt-hint.mine { display: inline-flex; align-items: center; gap: 8px; }
+.blt-count {
+  min-width: 1.7em;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: linear-gradient(#f0cf92, #c9993f);
+  color: #2a1a05;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.blt-seat.hurry ~ .blt-bottom .blt-count { background: linear-gradient(#ffb199, #e8563d); }
+
+.blt-hint {
+  padding: 7px 15px;
+  border-radius: 999px;
+  background: #100a06c4;
+  border: 1px solid #ffffff1c;
+  font-size: clamp(11px, min(1.3vw, 2vh), 15px);
+  backdrop-filter: blur(6px);
+}
+.blt-hint.warn { border-color: #e8a35c66; color: #ffd9a8; }
+
+/* ═══════════ speech, chat and the quick tray ═══════════ */
+
+.blt-bubble {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  translate: -50%;
+  max-width: min(46vw, 250px);
+  width: max-content;
+  padding: 6px 11px;
+  border-radius: 13px;
+  background: #fbf4e6;
+  color: #23180c;
+  font-size: clamp(11px, 1.3vw, 14px);
+  font-weight: 600;
+  line-height: 1.45;
+  box-shadow: 0 7px 20px #0000007a;
+  animation: blt-pop .3s var(--ease) both;
+  z-index: 9;
+  overflow-wrap: anywhere;
+}
+.blt-bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  translate: -50%;
+  border: 7px solid transparent;
+  border-top-color: #fbf4e6;
+}
+.blt-bubble.out { animation: blt-fade .28s var(--ease) both; }
+
+@keyframes blt-pop {
+  from { opacity: 0; transform: translateY(9px) scale(.82); }
+  60%  { transform: translateY(-2px) scale(1.04); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes blt-fade { to { opacity: 0; transform: translateY(-7px) scale(.94); } }
+
+.blt-tray {
+  position: absolute;
+  inset-inline-start: clamp(8px, 1.6vw, 18px);
+  /* The height of the hand moves with `--fit`, and this sum ignored it, so
+     the tray flew up into the middle of the table. */
+  bottom: calc(var(--bar) + var(--card-w) * var(--fit, 1) * 1.5 + 16px);
+  display: grid;
+  gap: 6px;
+  padding: 9px;
+  border-radius: 14px;
+  border: 1px solid #ffffff24;
+  background: #130c07ee;
+  backdrop-filter: blur(9px);
+  animation: blt-pop .22s var(--ease) both;
+  z-index: 9;
+}
+.blt-tray button {
+  padding: 7px 15px;
+  border-radius: 9px;
+  border: 1px solid #ffffff1f;
+  background: #26180cd9;
+  color: var(--ink);
+  font: inherit;
+  font-size: clamp(12px, 1.4vw, 15px);
+  cursor: pointer;
+  text-align: start;
+}
+.blt-tray button:hover { background: #3a2410; }
+.blt-tray form { display: flex; gap: 6px; }
+.blt-tray input {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 11px;
+  border-radius: 9px;
+  border: 1px solid #ffffff26;
+  background: #0c0705;
+  color: var(--ink);
+  font: inherit;
+  font-size: clamp(12px, 1.4vw, 15px);
+}
+.blt-tray form button { display: grid; place-items: center; padding: 7px 11px; }
+.blt-tray form button svg { width: 17px; height: 17px; }
+
+/* ═══════════ the closing sheet ═══════════ */
+
+.blt-sheet {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 4vh 4vw;
+  background: #05030299;
+  backdrop-filter: blur(5px);
+  z-index: var(--z-sheet);
+  animation: blt-pop .26s var(--ease) both;
+}
+/* "And this is my sira." The cards behind a declared project, face up in the
+   middle, for as long as it takes the table to read them. */
+.blt-reveal {
+  position: absolute;
+  left: 50%;
+  top: 38%;
+  transform: translate(-50%, -50%);
+  z-index: var(--z-top);
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 11px 15px;
+  border-radius: 18px;
+  background: linear-gradient(#2e1c0eee, #150c06ee);
+  border: 1px solid #d8ae6357;
+  box-shadow: 0 16px 38px #000000ad;
+  pointer-events: none;
+  animation: blt-reveal-in .36s var(--ease) both;
+  transition: opacity .38s var(--ease), transform .38s var(--ease);
+}
+@keyframes blt-reveal-in {
+  from { opacity: 0; transform: translate(-50%, -46%) scale(.9); }
+}
+.blt-reveal.out { opacity: 0; transform: translate(-50%, -54%) scale(.92); }
+.blt-reveal b {
+  color: var(--gold);
+  font-size: clamp(12px, 1.7vw, 15px);
+  text-shadow: 0 1px 6px #000;
+}
+.blt-reveal .cards { display: flex; }
+.blt-reveal img {
+  position: relative;
+  z-index: calc(9 - var(--k, 0));
+  width: calc(var(--felt-card) * .62);
+  border-radius: 6px;
+  margin-inline-start: calc(var(--felt-card) * -.16);
+  filter: drop-shadow(0 5px 9px #000000a8);
+  animation: blt-reveal-card .34s var(--ease) calc(var(--k, 0) * 95ms + 110ms) backwards;
+}
+.blt-reveal img:first-child { margin-inline-start: 0; }
+@keyframes blt-reveal-card {
+  from { opacity: 0; transform: translateY(16px) rotateY(78deg); }
+}
+
+/* The count sheet.
+
+   A hand of baloot ends in an argument, and the argument is always the same
+   four questions: what were the tricks worth, who took the last one, what was
+   declared, and what does that come to. So the sheet answers them in that
+   order, ours on the right where an Arabic eye starts, theirs on the left, the
+   name of the row between them. The numbers are counted up rather than
+   printed, the rows arrive one after another, and the winning side is lit —
+   not for decoration, but because a hand that ends in a flat grey table is a
+   hand nobody reads. */
+
+.blt-sheet-wrap {
+  display: grid;
+  justify-items: center;
+  width: min(94vw, 470px);
+}
+
+.blt-card-sheet {
+  position: relative;
+  width: 100%;
+  max-height: 86vh;
+  overflow: auto;
+  padding: clamp(12px, 2vw, 20px) clamp(12px, 2.2vw, 22px) clamp(13px, 2vw, 18px);
+  border-radius: 22px;
+  border: 1px solid #d8ae6357;
+  background:
+    radial-gradient(130% 74% at 50% -14%, #4d3115 0%, #2a1809 52%, #120a05 100%);
+  box-shadow: 0 24px 70px #000000c4, inset 0 1px 0 #ffe6b524;
+  text-align: center;
+  animation: blt-sheet-in .34s var(--ease) both;
+}
+.blt-card-sheet.match { padding-top: clamp(26px, 5vw, 42px); }
+@keyframes blt-sheet-in {
+  from { opacity: 0; transform: translateY(22px) scale(.94); }
+}
+
+/* ── the head: who we are, what was called, who took it ── */
+
+.blt-sheet-head {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ffffff17;
+}
+.blt-sheet-head .team {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: clamp(13px, 1.9vw, 16px);
+  font-weight: 700;
+  color: #b7a992;
+}
+.blt-sheet-head .ours { justify-content: flex-start; }
+.blt-sheet-head .theirs { justify-content: flex-end; }
+.blt-sheet-head .ours.win { color: #8fe0a6; }
+.blt-sheet-head .theirs.win { color: #f09a92; }
+.blt-sheet-head .tick {
+  width: 1.05em;
+  height: 1.05em;
+  animation: blt-tick .5s var(--ease) .5s backwards;
+}
+@keyframes blt-tick {
+  from { opacity: 0; transform: scale(.3) rotate(-25deg); }
+}
+.blt-sheet-head .call { display: flex; align-items: center; gap: 6px; }
+.blt-mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 13px;
+  border-radius: 999px;
+  background: linear-gradient(#f7dda4, #c9993f);
+  color: #2c1c06;
+  font-weight: 800;
+  font-size: clamp(12px, 1.7vw, 15px);
+  box-shadow: 0 3px 10px #00000073, inset 0 1px 0 #fff4dc;
+}
+.blt-mode svg { width: 1.1em; height: 1.1em; }
+.blt-mode.red { color: #93200f; }
+.blt-sheet-head .call u {
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: #ffd88a1f;
+  border: 1px solid #d8ae6357;
+  color: var(--gold);
+  font-size: clamp(10px, 1.4vw, 12px);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.blt-card-sheet h3 {
+  margin: 12px 0 2px;
+  font-size: clamp(18px, 2.6vw, 25px);
+  color: var(--gold);
+  text-shadow: 0 2px 14px #ffd88a3d;
+}
+.blt-card-sheet h4 {
+  margin: 16px 0 6px;
+  font-size: clamp(12px, 1.7vw, 14px);
+  color: var(--gold);
+  opacity: .85;
+}
+
+/* ── the four rows ── */
+
+.blt-tally { display: grid; gap: 6px; margin: 12px 0 0; }
+.blt-tally-row {
+  display: grid;
+  grid-template-columns: 1fr minmax(90px, auto) 1fr;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 11px;
+  border-radius: 13px;
+  background: linear-gradient(#ffffff12, #ffffff06);
+  animation: blt-row-in .42s var(--ease) both;
+  animation-delay: calc(var(--k) * 95ms + 130ms);
+}
+@keyframes blt-row-in {
+  from { opacity: 0; transform: translateY(11px); }
+}
+.blt-tally-row.sum {
+  background: linear-gradient(#ffe1a81f, #ffe1a80a);
+  border: 1px solid #d8ae6340;
+}
+.blt-tally-row .lab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--gold);
+  font-size: clamp(11px, 1.5vw, 13px);
+  opacity: .92;
+}
+.blt-tally-row .lab svg { width: 1.25em; height: 1.25em; opacity: .82; }
+.blt-tally-row .side {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+.blt-tally-row .ours { justify-content: flex-start; }
+.blt-tally-row .theirs { justify-content: flex-end; }
+
+.blt-num {
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  font-size: clamp(15px, 2.3vw, 19px);
+  color: var(--ink);
+}
+.side.ours .blt-num { color: #86d99a; }
+.side.theirs .blt-num { color: #e8776f; }
+
+.blt-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.blt-chips i {
+  font-style: normal;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #ffd88a1c;
+  border: 1px solid #d8ae634d;
+  color: #f0d9a8;
+  font-size: clamp(9px, 1.2vw, 11px);
+  white-space: nowrap;
+}
+
+/* ── the ribbon: what the hand actually paid ── */
+
+.blt-final {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+  margin: 13px 0 11px;
+  padding: 9px 16px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #ffeec1, #e9c47f 48%, #c9993f);
+  box-shadow: 0 10px 26px #00000094, inset 0 1px 0 #fff8e6;
+  animation: blt-slam .5s var(--ease) .78s both;
+}
+@keyframes blt-slam {
+  0%   { opacity: 0; transform: scale(1.24); filter: brightness(2.3); }
+  62%  { opacity: 1; transform: scale(.975); filter: brightness(1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.blt-final::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(114deg, #fff0 36%, #ffffffb3 50%, #fff0 64%);
+  transform: translateX(-130%);
+  animation: blt-shine 1.05s var(--ease) 1.2s both;
+  pointer-events: none;
+}
+@keyframes blt-shine { to { transform: translateX(130%); } }
+.blt-final .side { position: relative; display: flex; align-items: center; }
+.blt-final .ours { justify-content: flex-start; }
+.blt-final .theirs { justify-content: flex-end; }
+.blt-final .lab span {
+  color: #4b3208;
+  font-weight: 800;
+  font-size: clamp(12px, 1.7vw, 15px);
+  letter-spacing: .01em;
+}
+.blt-final .ours .blt-num { color: #0d6b2f; }
+.blt-final .theirs .blt-num { color: #9c2016; }
+.blt-num.big {
+  font-size: clamp(27px, 5.4vw, 42px);
+  line-height: 1;
+  text-shadow: 0 1px 0 #fff6dd;
+}
+
+/* ── the word for it ── */
+
+.blt-verdict {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 15px;
+  border-radius: 999px;
+  background: #17331f;
+  border: 1px solid #7ddc9a57;
+  color: #a9e9bd;
+  font-weight: 700;
+  font-size: clamp(11px, 1.5vw, 13px);
+  animation: blt-row-in .42s var(--ease) 1.05s both;
+}
+.blt-verdict.bayla {
+  background: #351816;
+  border-color: #e8776f57;
+  color: #f0a79f;
+}
+.blt-verdict svg { width: 1.05em; height: 1.05em; opacity: .9; }
+
+.blt-called {
+  margin: 11px 0 13px;
+  font-size: clamp(10px, 1.4vw, 12px);
+  opacity: .7;
+}
+
+/* ── points of light, drawn rather than loaded ── */
+
+.blt-sparks { position: absolute; inset: 0; pointer-events: none; }
+.blt-sparks i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 13px;
+  height: 13px;
+  margin: -6.5px;
+  color: #ffeab4;
+  opacity: 0;
+  transform: rotate(var(--a)) translateY(0) scale(.2);
+  animation: blt-spark 1.15s var(--ease) var(--d) 2 both;
+}
+.blt-sparks i svg { width: 100%; height: 100%; }
+@keyframes blt-spark {
+  0%   { opacity: 0; transform: rotate(var(--a)) translateY(0) scale(.2); }
+  30%  { opacity: 1; }
+  100% { opacity: 0;
+         transform: rotate(var(--a)) translateY(calc(var(--far) * -1)) scale(1); }
+}
+
+/* ── the crest: only a whole match earns it ── */
+
+.blt-crest {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(88vw, 380px);
+  margin-bottom: clamp(-34px, -6vw, -18px);
+  z-index: 2;
+  color: #f2cb7d;
+  filter: drop-shadow(0 10px 20px #000000ab);
+  animation: blt-crest-in .62s var(--ease) both;
+}
+.blt-crest.won { color: #f2cb7d; }
+.blt-crest.lost { color: #9d8b74; filter: grayscale(.55) drop-shadow(0 8px 18px #000a); }
+.blt-wings { width: 100%; height: auto; aspect-ratio: 132 / 46; }
+.blt-crest-crown {
+  position: absolute;
+  top: -7%;
+  width: 15%;
+  color: #ffe9b6;
+}
+.blt-crest-crown svg { width: 100%; height: 100%; }
+.blt-crest b {
+  position: absolute;
+  top: 33%;
+  font-size: clamp(24px, 6.4vw, 46px);
+  font-weight: 900;
+  color: #fff5d8;
+  text-shadow: 0 2px 0 #9d6b18, 0 6px 18px #000000ab;
+}
+@keyframes blt-crest-in {
+  0%   { opacity: 0; transform: translateY(18px) scale(.55); }
+  64%  { opacity: 1; transform: translateY(0) scale(1.07); }
+  100% { transform: scale(1); }
+}
+
+.blt-tap-hint {
+  display: block;
+  margin-top: 9px;
+  font-size: clamp(9px, 1.2vw, 11px);
+  opacity: .45;
+}
+
+.blt-rows { display: grid; gap: 6px; margin-bottom: 14px; text-align: start; }
+.blt-rows div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 11px;
+  border-radius: 10px;
+  background: #ffffff0d;
+  font-size: 13px;
+}
+.blt-rows b { font-variant-numeric: tabular-nums; }
+.blt-rows .lose { color: #e8776f; }
+.blt-rows .win { color: #86d99a; }
+
+.blt-book {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 14px;
+  font-size: 12px;
+}
+.blt-book th, .blt-book td { padding: 5px 6px; text-align: center; }
+.blt-book th { color: var(--gold); font-weight: 600; opacity: .8; }
+.blt-book tbody tr:nth-child(odd) { background: #ffffff0a; }
+.blt-book td b { font-variant-numeric: tabular-nums; }
+.blt-book .bayla { color: #e8776f; }
+
+.blt-sheet-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Abu Saad, once a match, before a single card moves. He is the owner's own
+   mark on the table: the greeting is the picture, so nothing is written over
+   it. */
+.blt-greet {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: var(--z-sheet);
+  pointer-events: none;
+  background: radial-gradient(62% 52% at 50% 46%, #00000080, #00000000 72%);
+  transition: opacity .42s var(--ease), transform .42s var(--ease);
+}
+.blt-greet img {
+  width: min(64vw, 350px);
+  filter: drop-shadow(0 18px 36px #000000bd);
+  animation: blt-greet-in .54s cubic-bezier(.2, 1.5, .4, 1) both;
+}
+@keyframes blt-greet-in {
+  0%   { opacity: 0; transform: translateY(28px) scale(.5) rotate(-9deg); }
+  68%  { opacity: 1; transform: translateY(0) scale(1.07) rotate(2deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+.blt-greet.out { opacity: 0; transform: scale(.88); }
+
+/* ═══════════ the table a player chooses ═══════════
+
+   The picture behind the game is a photograph of a majlis, and it is the
+   table by default. But a man who plays every night wants his own corner, so
+   the middle of the felt can be covered with a cloth of his choosing. Nothing
+   is replaced — the room stays the room, and the cloth is laid on it. */
+
+.blt-root[data-theme="sadu"] .blt-felt::before,
+.blt-root[data-theme="green"] .blt-felt::before,
+.blt-root[data-theme="layl"] .blt-felt::before {
+  content: '';
+  position: absolute;
+  inset: -3% -5%;
+  border-radius: 26px;
+  box-shadow: 0 22px 60px #00000094, inset 0 0 60px #00000059;
+  z-index: -1;
+}
+.blt-root[data-theme="sadu"] .blt-felt::before {
+  background:
+    repeating-linear-gradient(90deg, #7d1d15 0 26px, #6a1710 26px 52px),
+    #7d1d15;
+  box-shadow: 0 22px 60px #00000094, inset 0 0 60px #00000070;
+}
+.blt-root[data-theme="sadu"] .blt-felt::after {
+  content: '';
+  position: absolute;
+  inset: -3% -5%;
+  border-radius: 26px;
+  background:
+    repeating-linear-gradient(0deg, #0000 0 46px, #1a1008 46px 58px, #0000 58px 70px),
+    repeating-linear-gradient(0deg, #0000 0 52px, #e9c68a55 52px 56px, #0000 56px 70px);
+  z-index: -1;
+  pointer-events: none;
+}
+.blt-root[data-theme="green"] .blt-felt::before {
+  background: radial-gradient(120% 90% at 50% 30%, #1d6b47, #0d3a26 100%);
+}
+.blt-root[data-theme="layl"] .blt-felt::before {
+  background: radial-gradient(120% 90% at 50% 25%, #23325e, #0a1023 100%);
+}
+.blt-root[data-theme="layl"] .blt-bg::after { opacity: .35; }
+
+/* ═══════════ the table takes a beating ═══════════
+
+   A hand lost by a mile is called a hiding, and the room shows it: the floor
+   cracks under the felt and what was on it goes over. It is loud on purpose
+   and it is short on purpose, and anyone who does not want it turns it off in
+   the drawer. */
+
+.blt-root.cracked .blt-felt {
+  animation: blt-quake .5s var(--ease) 2;
+}
+.blt-cracks {
+  position: absolute;
+  inset: -6% -8%;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  animation: blt-crack-in 2.4s var(--ease) both;
+}
+.blt-cracks path {
+  fill: none;
+  stroke: #06030180;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  filter: drop-shadow(0 1px 0 #ffd9a83d);
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+  animation: blt-crack-draw .5s var(--ease) both;
+}
+@keyframes blt-crack-draw { to { stroke-dashoffset: 0; } }
+@keyframes blt-crack-in {
+  0% { opacity: 0; }
+  12% { opacity: 1; }
+  72% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.blt-shard {
+  position: absolute;
+  z-index: 6;
+  width: clamp(26px, 5vw, 46px);
+  height: clamp(26px, 5vw, 46px);
+  color: #e9c68a;
+  pointer-events: none;
+  animation: blt-tumble 1.5s cubic-bezier(.3, .6, .5, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+.blt-shard svg { width: 100%; height: 100%; filter: drop-shadow(0 6px 10px #000000a6); }
+@keyframes blt-tumble {
+  0%   { opacity: 0; transform: translate(0, 0) rotate(0) scale(.6); }
+  14%  { opacity: 1; }
+  100% { opacity: 0;
+         transform: translate(var(--fx, 0px), var(--fy, 220px))
+                    rotate(var(--spin, 420deg)) scale(1); }
+}
+
+/* ═══════════ the seating screen ═══════════
+
+   Before a card is dealt, the one question a player wants answered: who is
+   with me. Two columns, four names, and any machine's chair free to take. */
+
+.blt-lobby {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 4vh 4vw;
+  background: #05030299;
+  backdrop-filter: blur(5px);
+  z-index: var(--z-sheet);
+  animation: blt-pop .26s var(--ease) both;
+}
+.blt-lobby-card {
+  width: min(94vw, 460px);
+  /* A short phone in landscape has less height than this card wants, so it
+     scrolls inside itself rather than running off the screen with the start
+     button on the part nobody can reach. */
+  max-height: 88vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: clamp(12px, 2.2vw, 22px);
+  border-radius: 22px;
+  border: 1px solid #d8ae6357;
+  background: radial-gradient(130% 74% at 50% -14%, #4d3115 0%, #2a1809 52%, #120a05 100%);
+  box-shadow: 0 24px 70px #000000c4, inset 0 1px 0 #ffe6b524;
+  text-align: center;
+  animation: blt-sheet-in .34s var(--ease) both;
+}
+.blt-lobby-card h3 {
+  margin: 0 0 3px;
+  font-size: clamp(17px, 2.4vw, 22px);
+  color: var(--gold);
+}
+.blt-lobby-card p { margin: 0 0 14px; font-size: clamp(10px, 1.4vw, 12px); opacity: .65; }
+
+.blt-teams { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(6px, 1.6vw, 10px); }
+/* A short screen held sideways: the seats take one half and the deck the
+   other, so the whole choice — including the button that ends it — is on the
+   screen at once instead of below the fold. */
+@media (max-height: 620px) and (orientation: landscape) {
+  .blt-lobby-card {
+    width: min(96vw, 760px);
+    display: grid;
+    grid-template-columns: 1.05fr .95fr;
+    grid-template-areas: 'head head' 'teams look' 'teams skins' 'teams go';
+    align-content: start;
+    column-gap: clamp(10px, 2vw, 18px);
+  }
+  .blt-lobby-card h3 { grid-area: head; margin: 0; font-size: clamp(14px, 2vw, 18px); }
+  .blt-lobby-card p { display: none; }
+  .blt-teams { grid-area: teams; align-content: start; }
+  .blt-lobby-look { grid-area: look; margin-top: 6px; }
+  .blt-lobby-skins { grid-area: skins; margin-top: 8px; padding-top: 8px; gap: 6px; }
+  .blt-lobby-go { grid-area: go; margin-top: 8px; }
+  .blt-teams .who { padding: 4px 4px; gap: 2px; }
+  .blt-teams .face { width: clamp(22px, 4.4vh, 30px); }
+  .blt-teams .team { padding: 7px 6px; gap: 5px; }
+  .blt-lobby-look { margin-top: 2px; gap: 4px; }
+  .blt-lobby-look img { width: clamp(20px, 4.6vh, 30px); }
+  .blt-lobby-card { padding: 8px 11px; }
+  .blt-lobby-skins { margin-top: 5px; padding-top: 5px; }
+  .blt-lobby-clock { display: none; }
+  /* The label sits beside its chips instead of above them: three rows saved
+     is the difference between a start button on the screen and one below it. */
+  .blt-lobby-skins .pick { display: flex; align-items: center; gap: 8px; }
+  .blt-lobby-skins .pick > span { flex: 0 0 auto; width: 4.6em; margin: 0; }
+  .blt-lobby-skins .pick div { flex: 1; }
+  .blt-lobby-skins .chip { padding: 5px 3px; }
+  .blt-lobby-go { gap: 4px; }
+  .blt-lobby-go .blt-call { padding: 7px 18px; }
+}
+@media (max-height: 620px) and (orientation: portrait) {
+  .blt-lobby-card h3 { margin-bottom: 0; font-size: clamp(15px, 2vw, 19px); }
+  .blt-lobby-card p { margin-bottom: 8px; }
+  .blt-teams .face { width: clamp(26px, 5.5vw, 34px); }
+  .blt-lobby-look { margin-top: 8px; }
+  .blt-lobby-look img { width: clamp(30px, 8vw, 44px); }
+}
+.blt-teams .team {
+  display: grid;
+  gap: 7px;
+  padding: 10px 9px;
+  border-radius: 14px;
+  background: #ffffff0d;
+  border: 1px solid #ffffff12;
+}
+.blt-teams .team > b {
+  font-size: clamp(11px, 1.5vw, 13px);
+  color: var(--gold);
+  opacity: .9;
+}
+.blt-teams .ours { border-color: #7ddc9a3d; }
+.blt-teams .theirs { border-color: #e8776f3d; }
+.blt-teams .who {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  padding: 8px 4px;
+  border-radius: 11px;
+  background: #00000038;
+  font-size: clamp(11px, 1.5vw, 13px);
+}
+.blt-teams .who.me { background: #ffd88a1c; box-shadow: inset 0 0 0 1px #d8ae6357; }
+.blt-teams .face {
+  display: grid;
+  place-items: center;
+  width: clamp(34px, 7vw, 46px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #241509;
+  border: 2px solid #d8ae63;
+  color: var(--gold);
+  font-size: clamp(14px, 3vw, 19px);
+  font-weight: 700;
+  font-style: normal;
+}
+.blt-teams .face img { width: 100%; height: 100%; object-fit: cover; }
+.blt-teams .who span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.blt-teams .who u {
+  padding: 1px 7px;
+  border-radius: 7px;
+  background: #2f6fd0;
+  color: #fff;
+  font-size: clamp(9px, 1.2vw, 11px);
+  text-decoration: none;
+}
+.blt-teams .who u.bot { background: #ffffff1f; color: #cbbda6; }
+.blt-take {
+  margin-top: 2px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  border: 1px solid #d8ae6370;
+  background: #ffd88a1c;
+  color: var(--gold);
+  font: inherit;
+  font-size: clamp(9px, 1.3vw, 11px);
+  font-weight: 700;
+  cursor: pointer;
+}
+.blt-take:hover { background: #ffd88a33; }
+.blt-take:active { transform: scale(.94); }
+
+/* The deck as it will look, before a card is dealt. Four cards at one size,
+   the back and three faces, so a choice is seen and not guessed. */
+.blt-lobby-look {
+  display: flex;
+  justify-content: center;
+  gap: clamp(4px, 1.2vw, 10px);
+  margin-top: 13px;
+}
+.blt-lobby-look img {
+  width: clamp(38px, 11vw, 62px);
+  border-radius: 5px;
+  box-shadow: 0 6px 14px #00000080;
+}
+
+/* Choosing a table and a deck before the first card: the same three rows as
+   the drawer, laid wide enough to read on a phone. */
+.blt-lobby-skins {
+  display: grid;
+  gap: 9px;
+  margin-top: 13px;
+  padding-top: 12px;
+  border-top: 1px solid #ffffff14;
+  text-align: start;
+}
+.blt-lobby-skins .pick > span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: clamp(10px, 1.4vw, 12px);
+  color: var(--gold);
+  opacity: .85;
+}
+/* A grid, not a wrapping row: five choices on a phone used to leave the last
+   one stretched alone across a line of its own. */
+.blt-lobby-skins .pick div {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(58px, 1fr));
+  gap: 5px;
+}
+.blt-lobby-skins .chip {
+  min-width: 0;
+  padding: 7px 4px;
+  border-radius: 9px;
+  border: 1px solid #ffffff1a;
+  background: #ffffff0d;
+  color: var(--ink);
+  font: inherit;
+  font-size: clamp(9px, 1.3vw, 11px);
+  cursor: pointer;
+}
+.blt-lobby-skins .chip.on {
+  background: linear-gradient(#f0cf92, #c9993f);
+  border-color: #f2ce88;
+  color: #2a1a05;
+  font-weight: 700;
+}
+
+.blt-lobby-go {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  margin-top: 15px;
+}
+.blt-lobby-clock {
+  font-size: clamp(9px, 1.3vw, 11px);
+  opacity: .55;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ═══════════ the settings drawer ═══════════ */
+
+.blt-opts {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-sheet);
+}
+.blt-opts-card {
+  position: absolute;
+  left: clamp(6px, 1.4vw, 14px);
+  top: clamp(44px, 7.5vh, 62px);
+  width: min(78vw, 264px);
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid #d8ae6357;
+  background: linear-gradient(#2c1b0df2, #150c06f7);
+  box-shadow: 0 16px 40px #000000ad;
+  text-align: start;
+  animation: blt-opts-in .22s var(--ease) both;
+}
+@keyframes blt-opts-in {
+  from { opacity: 0; transform: translateY(-8px) scale(.96); }
+}
+.blt-opts-card h4 {
+  margin: 0 0 9px;
+  font-size: clamp(11px, 1.5vw, 13px);
+  color: var(--gold);
+  opacity: .85;
+}
+.blt-opts-card .row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 6px;
+  padding: 9px 11px;
+  border-radius: 11px;
+  border: 0;
+  background: #ffffff0f;
+  color: var(--ink);
+  font: inherit;
+  font-size: clamp(11px, 1.5vw, 13px);
+  cursor: pointer;
+}
+.blt-opts-card .row:hover { background: #ffffff1a; }
+.blt-opts-card .sw {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 19px;
+  border-radius: 999px;
+  background: #ffffff1f;
+  box-shadow: inset 0 0 0 1px #ffffff26;
+  transition: background .18s;
+  position: relative;
+}
+.blt-opts-card .sw::after {
+  content: '';
+  position: absolute;
+  top: 2.5px;
+  inset-inline-start: 2.5px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #b9ac97;
+  transition: transform .18s var(--ease), background .18s;
+}
+.blt-opts-card .sw.on { background: linear-gradient(#f0cf92, #c9993f); }
+.blt-opts-card .sw.on::after { background: #2a1a05; transform: translateX(-15px); }
+.blt-opts-card .pick {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #ffffff14;
+  font-size: clamp(11px, 1.5vw, 13px);
+}
+.blt-opts-card .pick > span { display: block; margin-bottom: 7px; opacity: .8; }
+.blt-opts-card .pick div {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(52px, 1fr));
+  gap: 5px;
+}
+.blt-opts-card .pick button {
+  flex: 1;
+  padding: 7px 4px;
+  border-radius: 9px;
+  border: 1px solid #ffffff1a;
+  background: #ffffff0d;
+  color: var(--ink);
+  font: inherit;
+  font-size: clamp(9px, 1.3vw, 11px);
+  cursor: pointer;
+}
+.blt-opts-card .pick { max-width: 100%; }
+.blt-opts-card .pick div { flex-wrap: wrap; }
+.blt-opts-card .pick button.chip { min-width: 0; }
+.blt-opts-card .pick button.on {
+  background: linear-gradient(#f0cf92, #c9993f);
+  border-color: #f2ce88;
+  color: #2a1a05;
+  font-weight: 700;
+}
+
+/* A seat that has claimed a project and not yet laid it down. */
+.blt-claim {
+  position: absolute;
+  top: -10px;
+  inset-inline-end: -6px;
+  z-index: 5;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: linear-gradient(#f0cf92, #c9993f);
+  color: #2a1a05;
+  font-size: clamp(8px, 1.1vw, 10px);
+  font-weight: 800;
+  font-style: normal;
+  white-space: nowrap;
+  box-shadow: 0 3px 9px #000000a6;
+  animation: blt-pop .3s var(--ease) both;
+}
+
+/* Gahwa: the one call that is not a multiplier but a wager on the match. */
+/* The pass that ends the hand rather than passing it on. It is not a warning
+   and not a refusal — it is simply a different thing from an ordinary pass,
+   and it should not look identical to one. */
+.blt-call.waraq {
+  border-color: #d8ae63a6;
+  background: linear-gradient(#3a2a12ee, #1c1208f2);
+  color: #f0d9a8;
+}
+
+.blt-call.gahwa {
+  background: linear-gradient(#c9402f, #7e1d13);
+  border-color: #ffb1a3;
+  color: #fff3ef;
+  font-weight: 800;
+  box-shadow: 0 6px 18px #c9402f4d;
+}
+.blt-call.gahwa:hover { filter: brightness(1.12); }
+.blt-score .meta .gahwa {
+  padding: 1px 7px;
+  border-radius: 7px;
+  background: #c9402f;
+  color: #fff3ef;
+  font-weight: 800;
+}
+
+/* ═══════════ deal banner ═══════════ */
+
+.blt-banner {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  translate: -50% -50%;
+  z-index: var(--z-bar);
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 1px solid #d8ae6357;
+  background: #150d08e8;
+  color: var(--gold);
+  font-size: clamp(13px, 1.7vw, 19px);
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 8px 26px #00000080;
+  animation: blt-banner 2.4s var(--ease) both;
+  pointer-events: none;
+}
+@keyframes blt-banner {
+  0%   { opacity: 0; transform: scale(.8); }
+  14%  { opacity: 1; transform: scale(1); }
+  78%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(.96); }
+}
+
+/* ═══════════ rotate prompt ═══════════ */
+
+.blt-rotate {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  padding: 8vw;
+  text-align: center;
+  background: #0b0603f2;
+}
+.blt-rotate strong { display: block; font-size: 20px; color: var(--gold); }
+.blt-rotate span { display: block; font-size: 14px; opacity: .8; }
+
+@media (prefers-reduced-motion: reduce) {
+  .blt-root *, .blt-root *::after { animation: none !important; transition: none !important; }
+}

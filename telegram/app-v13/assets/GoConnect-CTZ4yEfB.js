@@ -1,0 +1,1 @@
+import{c as e}from"./signals.module-lmW9Tqy9.js";import{c as t}from"./router-DogTk7EP.js";function n(n){return e(()=>t(`/communities?tab=dm`,{replace:!0}),[]),null}export{n as default};

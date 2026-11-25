@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#38bdf8"/><stop offset=".55" stop-color="#6366f1"/><stop offset="1" stop-color="#312e81"/></linearGradient>
+<linearGradient id="lens" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e0f2fe"/><stop offset="1" stop-color="#7dd3fc"/></linearGradient>
+<filter id="s" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#1e1b4b" flood-opacity=".45"/></filter>
+</defs>
+<rect width="256" height="256" rx="58" fill="url(#bg)"/>
+<g filter="url(#s)">
+<rect x="40" y="52" width="104" height="104" rx="22" fill="#fff" opacity=".22" transform="rotate(-10 92 104)"/>
+<rect x="64" y="66" width="104" height="104" rx="22" fill="#fff" opacity=".35" transform="rotate(6 116 118)"/>
+<circle cx="118" cy="114" r="52" fill="url(#lens)" stroke="#fde68a" stroke-width="14"/>
+<path d="M156 152l46 46" stroke="#fde68a" stroke-width="22" stroke-linecap="round"/>
+<path d="M90 114c9-14 19-20 28-20s19 6 28 20c-9 14-19 20-28 20s-19-6-28-20z" fill="#1e1b4b"/>
+<circle cx="118" cy="114" r="8" fill="#38bdf8"/>
+</g></svg>

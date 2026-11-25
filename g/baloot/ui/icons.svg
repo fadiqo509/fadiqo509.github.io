@@ -1,0 +1,196 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <!--
+    Shahd baloot icon set. Drawn, not borrowed: AGENTS.md forbids emoji and
+    generic glyphs standing in for designed marks. One sprite so the table
+    costs a single request, referenced as <use href="icons.svg#name">.
+    Stroke icons inherit currentColor; suit marks are solid fills.
+  -->
+  <symbol id="i-leave" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/>
+    <path d="M10 8 6 12l4 4"/><path d="M6 12h9"/>
+  </symbol>
+
+  <symbol id="i-learn" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19v15H6.5A2.5 2.5 0 0 0 4 20.5Z"/>
+    <path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H19v3H6.5A2.5 2.5 0 0 1 4 20.5Z"/>
+    <path d="M9 7.5h6M9 11h4"/>
+  </symbol>
+
+  <symbol id="i-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="9" y="2.5" width="6" height="11" rx="3"/>
+    <path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M9 21h6"/>
+  </symbol>
+
+  <symbol id="i-mic-off" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 9V5.5a3 3 0 0 1 5.9-.7M15 11.6V12a3 3 0 0 1-4.3 2.7"/>
+    <path d="M5.5 11a6.5 6.5 0 0 0 10 5.5M18.5 11a6.4 6.4 0 0 1-.7 2.9"/>
+    <path d="M12 17.5V21M9 21h6M4 3l16 18"/>
+  </symbol>
+
+  <symbol id="i-sound" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 9.5h3.2L12 5.5v13L7.2 14.5H4Z"/>
+    <path d="M15.6 9a4.2 4.2 0 0 1 0 6M18.4 6.6a7.8 7.8 0 0 1 0 10.8"/>
+  </symbol>
+
+  <symbol id="i-sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 9.5h3.2L12 5.5v13L7.2 14.5H4Z"/>
+    <path d="m16.5 9.5 5 5M21.5 9.5l-5 5"/>
+  </symbol>
+
+  <!-- Motion sounds: the card and the lines of its flight. Its "off" twin
+       keeps the card and drops the movement. -->
+  <symbol id="i-fx" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="10.2" y="4.6" width="9.4" height="13.6" rx="2"
+          transform="rotate(8 14.9 11.4)"/>
+    <path d="M6.6 8.4H2.6M7.1 12.4H4.1M8.1 16.4H6.1"/>
+  </symbol>
+
+  <symbol id="i-fx-off" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="10.2" y="4.6" width="9.4" height="13.6" rx="2"
+          transform="rotate(8 14.9 11.4)"/>
+    <path d="M3.4 3.6 20.6 20.4"/>
+  </symbol>
+
+  <symbol id="i-invite" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9.5 11.5a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z"/>
+    <path d="M2.8 20.2a6.7 6.7 0 0 1 13.4 0"/>
+    <path d="M19 8v6M22 11h-6"/>
+  </symbol>
+
+  <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20.5 12.2c0 3.9-3.8 7-8.5 7a9.7 9.7 0 0 1-2.8-.4L4 20.5l1.5-3.6a6.6 6.6 0 0 1-2-4.7c0-3.9 3.8-7 8.5-7s8.5 3.1 8.5 7Z"/>
+    <path d="M8.6 12h.01M12 12h.01M15.4 12h.01"/>
+  </symbol>
+
+  <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 3 10.5 13.5M21 3l-6.8 18-3.7-7.5L3 9.8Z"/>
+  </symbol>
+
+  <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.9" stroke-linecap="round">
+    <path d="M6 6l12 12M18 6 6 18"/>
+  </symbol>
+
+  <symbol id="i-replay" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 3.5V9h-5.5"/>
+  </symbol>
+
+  <symbol id="i-crown" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M3 8.4 6.6 12 12 5l5.4 7L21 8.4 19.2 18H4.8Zm1.8 11.1h14.4v1.7H4.8Z"/>
+  </symbol>
+
+  <!-- The drawer that holds every preference. Teeth drawn as a dashed ring
+       rather than eight paths: the same shape at a tenth of the ink. -->
+  <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.7" stroke-linecap="round">
+    <circle cx="12" cy="12" r="3.4"/>
+    <circle cx="12" cy="12" r="7.7" stroke-dasharray="2.7 3.2"/>
+    <path d="M12 1.7v2.5M12 19.8v2.5M22.3 12h-2.5M4.2 12H1.7"/>
+  </symbol>
+
+  <!-- Reordering the hand: three cards of rising height and the arrow that
+       moves them. -->
+  <symbol id="i-sort" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="2.8" y="12.4" width="4.8" height="8.4" rx="1.4"/>
+    <rect x="9.6" y="9" width="4.8" height="11.8" rx="1.4"/>
+    <rect x="16.4" y="5.4" width="4.8" height="15.4" rx="1.4"/>
+    <path d="M3.4 5.4h6.2M7.4 3.2 9.9 5.4 7.4 7.6"/>
+  </symbol>
+
+  <!-- Marks for the count sheet. One line each, drawn to read at 18 pixels:
+       the tricks a side took, the last trick, the projects it declared, and
+       the points those three add up to. -->
+  <symbol id="i-tricks" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3.2" y="6.6" width="9.6" height="13.4" rx="2"
+          transform="rotate(-10 8 13.3)"/>
+    <rect x="11" y="4" width="9.6" height="13.4" rx="2"
+          transform="rotate(8 15.8 10.7)"/>
+  </symbol>
+
+  <symbol id="i-land" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6.2 21.2V3.4"/>
+    <path d="M6.2 4.6h11.6l-2.5 3.7 2.5 3.7H6.2"/>
+    <path d="M3.4 21.2h9"/>
+  </symbol>
+
+  <symbol id="i-projects" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 9.6 7.5 4.4h9L20 9.6l-8 10.2z"/>
+    <path d="M4 9.6h16M8.6 9.6 12 19.8 15.4 9.6 12 4.4z"/>
+  </symbol>
+
+  <symbol id="i-points" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="8.4"/>
+    <path d="m12 7.3 1.5 3.1 3.4.5-2.5 2.4.6 3.4-3-1.6-3 1.6.6-3.4-2.5-2.4 3.4-.5z"/>
+  </symbol>
+
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m4.6 12.6 4.9 4.8L19.6 6.6"/>
+  </symbol>
+
+  <symbol id="i-spark" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 1.6c1.1 5.8 3.5 8.2 9.3 9.3-5.8 1.1-8.2 3.5-9.3 9.3-1.1-5.8-3.5-8.2-9.3-9.3 5.8-1.1 8.2-3.5 9.3-9.3Z"/>
+  </symbol>
+
+  <!-- The crest behind the closing word: two wings, the crown sits over them
+       in the markup. Wide box on purpose; it is a banner, not an icon. -->
+  <symbol id="i-wings" viewBox="0 0 132 46" fill="currentColor">
+    <path d="M58 25.5c-9.5-7-21-12.5-35-15 7 4.6 10.6 9.2 11.6 13.8-7-2.3-14-2.3-21-1.2
+             8.2 3.5 14 8.1 17.5 12.7 9.3-2.3 18.6-5.8 26.9-10.3Z" opacity=".92"/>
+    <path d="M74 25.5c9.5-7 21-12.5 35-15-7 4.6-10.6 9.2-11.6 13.8 7-2.3 14-2.3 21-1.2
+             -8.2 3.5-14 8.1-17.5 12.7-9.3-2.3-18.6-5.8-26.9-10.3Z"/>
+    <path d="M66 6.5c2.2 3.6 5 6.4 8.2 9-2.6 4.2-6 8.3-8.2 12.6-2.2-4.3-5.6-8.4-8.2-12.6
+             3.2-2.6 6-5.4 8.2-9Z" opacity=".55"/>
+  </symbol>
+
+  <!-- What flies off a table when a hand is lost badly: the cup, the dish,
+       and the dates that were on it. Drawn as solids so they read at the size
+       of a thumbnail while they tumble. -->
+  <symbol id="i-cup" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M4.2 7h13.2v5.6c0 3.3-2.9 6-6.6 6s-6.6-2.7-6.6-6Z"/>
+    <path d="M17.8 8.4h1.4c1.7 0 3 1.2 3 2.8s-1.3 2.8-3 2.8h-1.4v-1.9h1.4c.6 0 1.1-.4 1.1-.9
+             s-.5-.9-1.1-.9h-1.4Z"/>
+    <path d="M3 20.2h15.6v1.9H3Z"/>
+  </symbol>
+
+  <symbol id="i-plate" viewBox="0 0 24 24" fill="currentColor">
+    <ellipse cx="12" cy="13.4" rx="10.6" ry="5.2" opacity=".9"/>
+    <ellipse cx="12" cy="12.2" rx="6.4" ry="3" opacity=".45"/>
+  </symbol>
+
+  <symbol id="i-dates" viewBox="0 0 24 24" fill="currentColor">
+    <ellipse cx="8.4" cy="13" rx="4.2" ry="6" transform="rotate(-18 8.4 13)"/>
+    <ellipse cx="15.6" cy="14.4" rx="3.6" ry="5.2" transform="rotate(14 15.6 14.4)"/>
+  </symbol>
+
+  <!-- Suit marks. Drawn shapes, not the playing-card characters. -->
+  <symbol id="i-suit-S" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2.2c1.5 2.4 3.6 4.2 5.6 6 1.6 1.5 2.6 2.9 2.6 4.7a4.2 4.2 0 0 1-6.9 3.3l.9 5.6h-4.4l.9-5.6a4.2 4.2 0 0 1-6.9-3.3c0-1.8 1-3.2 2.6-4.7 2-1.8 4.1-3.6 5.6-6Z"/>
+  </symbol>
+  <symbol id="i-suit-H" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 21.3C8.4 18.4 2.6 14 2.6 9.2A4.9 4.9 0 0 1 12 6.9a4.9 4.9 0 0 1 9.4 2.3c0 4.8-5.8 9.2-9.4 12.1Z"/>
+  </symbol>
+  <symbol id="i-suit-D" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 1.8c2.2 4 4.6 7.3 7.4 10.2C16.6 14.9 14.2 18.2 12 22.2 9.8 18.2 7.4 14.9 4.6 12 7.4 9.1 9.8 5.8 12 1.8Z"/>
+  </symbol>
+  <symbol id="i-suit-C" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2.2a4.1 4.1 0 0 1 3.4 6.4 4.1 4.1 0 1 1-1.9 7.4l.9 5.8H9.6l.9-5.8a4.1 4.1 0 1 1-1.9-7.4A4.1 4.1 0 0 1 12 2.2Z"/>
+  </symbol>
+</svg>

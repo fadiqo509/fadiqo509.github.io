@@ -1,0 +1,29 @@
+{
+ "_note": "Written by build_models.py. Drop a hand made GLB in beside these under the same name and it is used instead.",
+ "models": {
+  "abusaad": {
+   "file": "char-abusaad.glb",
+   "aspect": 1.44221,
+   "triangles": 14452,
+   "bytes": 477976
+  },
+  "shahd": {
+   "file": "char-shahd.glb",
+   "aspect": 0.98603,
+   "triangles": 10736,
+   "bytes": 371192
+  },
+  "noura": {
+   "file": "char-noura.glb",
+   "aspect": 1.02183,
+   "triangles": 11372,
+   "bytes": 394404
+  },
+  "alaa": {
+   "file": "char-alaa.glb",
+   "aspect": 1.12698,
+   "triangles": 9588,
+   "bytes": 317496
+  }
+ }
+}
